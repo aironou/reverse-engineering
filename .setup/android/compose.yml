@@ -1,0 +1,78 @@
+x-dockerfile: &dockerfile
+    context: ../..
+    dockerfile: .setup/android/Dockerfile
+
+x-networks: &networks
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+services:
+    emulator:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:android-emulator
+        build:
+            <<: [ *dockerfile ]
+            target: emulator
+        healthcheck:
+            test: [
+                "CMD",
+                "bash",
+                "-c",
+                "</dev/tcp/127.0.0.1/5555"
+            ]
+            timeout: 5s
+            start_period: 2m
+            start_interval: 10s
+            retries: 5
+        devices:
+            - /dev/kvm:/dev/kvm
+        volumes:
+            - android-avd:/opt/android/avd
+            - android:/root/.android
+
+    adb-server:
+        image: aironou/reverse-engineering:adb
+        build:
+            <<: [*dockerfile]
+            target: adb
+        environment:
+            ADB_TRACE: all
+        network_mode: "service:emulator"
+        command: [
+            "-a",
+            "nodaemon",
+            "server"
+        ]
+        healthcheck:
+            test: [
+                "CMD",
+                "/opt/android/platform-tools/adb",
+                "server-status"
+            ]
+            timeout: 5s
+            start_period: 2m
+            start_interval: 10s
+            retries: 5
+        depends_on:
+            emulator:
+                condition: service_healthy
+        volumes:
+            - android:/root/.android
+
+    adb-shell:
+        <<: [*networks]
+        image: aironou/reverse-engineering:adb
+        build:
+            <<: [*dockerfile]
+            target: adb
+        environment:
+            ADB_SERVER_SOCKET: tcp:emulator:5037
+        command: ["shell"]
+        stdin_open: true
+        tty: true
+        depends_on:
+            adb-server:
+                condition: service_healthy
+
+volumes:
+    android-avd:
+    android:
