@@ -1,0 +1,12 @@
+services:
+    emulator:
+        command: [
+            "-no-snapshot",
+            "-no-metrics",
+            "-no-boot-anim",
+            "-no-audio",
+            "-no-cache",
+            "-no-window",
+            "-accel", "on",
+            "-gpu", "swiftshader"
+        ]

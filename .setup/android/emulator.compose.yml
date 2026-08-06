@@ -1,0 +1,16 @@
+services:
+    emulator:
+        environment:
+            DISPLAY: "${DISPLAY:-:0}"
+        command: [
+            "-no-snapshot",
+            "-no-metrics",
+            "-no-boot-anim",
+            "-no-audio",
+            "-no-cache",
+            "-accel", "on",
+            "-gpu", "swiftshader",
+            "-prop", "hw.keyboard=yes"
+        ]
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix:rw
