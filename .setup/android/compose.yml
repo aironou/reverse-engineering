@@ -12,6 +12,7 @@ services:
         build:
             <<: [ *dockerfile ]
             target: emulator
+        stop_grace_period: 1m
         healthcheck:
             test: [
                 "CMD",
@@ -25,9 +26,11 @@ services:
             retries: 5
         devices:
             - /dev/kvm:/dev/kvm
+            - /dev/dri:/dev/dri
         volumes:
             - android-avd:/opt/android/avd
             - android:/root/.android
+            - /tmp/.X11-unix:/tmp/.X11-unix
 
     adb-server:
         image: aironou/reverse-engineering:adb
@@ -43,11 +46,12 @@ services:
             "server"
         ]
         healthcheck:
-            test: [
-                "CMD",
-                "/opt/android/platform-tools/adb",
-                "server-status"
-            ]
+            test:
+                - CMD-SHELL
+                - |
+                    /opt/android/platform-tools/adb server-status >/dev/null &&
+                    /opt/android/platform-tools/adb shell getprop sys.boot_completed |
+                    grep -q '^1'
             timeout: 5s
             start_period: 2m
             start_interval: 10s

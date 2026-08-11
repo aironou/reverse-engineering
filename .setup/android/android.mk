@@ -47,14 +47,15 @@ destroy::
 
 .PHONY: android\:emulator
 android\:emulator:
+	xhost +si:localuser:root || exit $$?;
 ifeq (,$(PARAMS))
-	status=0; \
-	xhost +si:localuser:root || exit $$?; \
-	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_FILE) run --rm -it adb-shell || status=$$?; \
-	xhost -si:localuser:root; \
-	exit $$status
+	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_FILE) run --rm -it adb-shell || true; \
+	$(MAKE) destroy android;
 else ifeq (headless,$(PARAMS))
-	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it adb-shell
+	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it adb-shell || true; \
+	$(MAKE) destroy android;
 else
 	@$(MAKE) help android
 endif
+	xhost -si:localuser:root;
+

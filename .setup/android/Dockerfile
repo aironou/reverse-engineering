@@ -81,6 +81,7 @@ RUN apt install -yq --no-install-recommends \
     libxinerama1 \
     libfontconfig1 \
     libgl1 \
+    mesa-vulkan-drivers \
     libxcb-cursor0 \
     libxkbcommon-x11-0 \
     libxcb-icccm4 \
@@ -109,7 +110,7 @@ COPY --from=emulator-build ${ANDROID_SYSTEM_IMAGES_HOME} ${ANDROID_SYSTEM_IMAGES
 
 RUN printf '%s\n' \
         "find ${ANDROID_AVD_HOME} -name '*.lock' -exec rm -rfv -- {} +" \
-        "${ANDROID_EMULATOR_HOME}/emulator -avd ${ANDROID_AVD_NAME} \"\$@\"" \
+        "exec ${ANDROID_EMULATOR_HOME}/emulator -avd ${ANDROID_AVD_NAME} \"\$@\"" \
     >> entrypoint.sh \
     && mkdir -p ${ANDROID_HOME}/platform-tools
 
