@@ -60,7 +60,7 @@ build::
 .PHONY: detroy
 destroy::
 
-include .setup/makefile/*.mk
+include .setup/*/*.mk
 
 .env:
 ifneq (,$(HAS_FORCE))
