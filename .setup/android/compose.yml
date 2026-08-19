@@ -7,10 +7,10 @@ x-networks: &networks
 
 services:
     emulator:
-        <<: [ *networks ]
+        <<: [*networks]
         image: aironou/reverse-engineering:android-emulator
         build:
-            <<: [ *dockerfile ]
+            <<: [*dockerfile]
             target: emulator
         stop_grace_period: 1m
         healthcheck:
@@ -32,7 +32,7 @@ services:
             - android:/root/.android
             - /tmp/.X11-unix:/tmp/.X11-unix
 
-    adb-server:
+    server:
         image: aironou/reverse-engineering:adb
         build:
             <<: [*dockerfile]
@@ -62,7 +62,7 @@ services:
         volumes:
             - android:/root/.android
 
-    adb-shell:
+    shell:
         <<: [*networks]
         image: aironou/reverse-engineering:adb
         build:
@@ -74,7 +74,7 @@ services:
         stdin_open: true
         tty: true
         depends_on:
-            adb-server:
+            server:
                 condition: service_healthy
 
 volumes:
