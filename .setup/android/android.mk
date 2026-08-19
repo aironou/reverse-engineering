@@ -61,3 +61,5 @@ else
 endif
 	xhost -si:localuser:root
 
+projects/%/artifacts/%/apk/%.apk:
+	$(COMPOSE_ANDROID_BIN) cp shell:$@ $@
