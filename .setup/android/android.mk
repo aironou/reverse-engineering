@@ -52,10 +52,10 @@ ifeq (,$(PARAMS))
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
 else ifeq (headless,$(PARAMS))
-	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it adb-shell || true; \
-	$(MAKE) destroy android;
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
+else ifeq (attach,$(PARAMS))
+	$(COMPOSE_ANDROID_BIN) exec shell bash
 else
 	@$(MAKE) help android
 endif
