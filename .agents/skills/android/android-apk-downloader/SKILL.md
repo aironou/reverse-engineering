@@ -114,9 +114,6 @@ start ADB shell in a headless android emulator.
 
 #### open app page at play store
 
-- `preinstalled=true` if it succeeded
-- `preinstalled=false` otherwise
-
 before opening the app page, `check package installation`. if it succeeded, set
 `preinstalled=true` and skip installation steps. set `preinstalled=false`
 otherwise.
