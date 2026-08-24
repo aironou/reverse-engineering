@@ -40,7 +40,7 @@ help::
 
 .PHONY: build
 build::
-	$(call ANDROID_CHOICE,$(COMPOSE_ANDROID_BIN) build $(if $(HAS_FORCE),--no-cache))
+	$(call ANDROID_CHOICE,$(COMPOSE_ANDROID_BIN) --profile "*" build $(if $(HAS_FORCE),--no-cache))
 
 .PHONY: destroy
 destroy::
