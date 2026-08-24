@@ -24,7 +24,8 @@ define ANDROID_HELP
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:emulator' '' 'starts android emulator with ADB shell' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    headless' '' 'use headless emulator' \
-	'' '' '$(TEXT_CYAN)' 'make android:emulator [headless]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    attach' '' 'attach to running ADB shell' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator [headless, attach]\n' \
 | column -s '|' -t -d -N command,description -W description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
