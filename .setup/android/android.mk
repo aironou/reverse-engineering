@@ -37,12 +37,17 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
 	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'aapt2 command' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
-	'' '' '$(TEXT_CYAN)' 'make android:apkanalyzer [command] [apk]\n' \
+	'' '' '$(TEXT_CYAN)' 'make android:aapt2 [command] [apk]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apksigner' '' 'exec apksigner' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
 	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apksigner command' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
 	'' '' '$(TEXT_CYAN)' 'make android:apksigner [command] [apk]\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apktool' '' 'exec apktool' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apktool command' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make android:apktool [command] [apk]\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
@@ -105,3 +110,11 @@ android\:apksigner:
 	$(COMPOSE_ANDROID_BIN) run --rm \
 		-v "$(shell pwd)/$(APK):/$(APK):ro" \
 		apksigner $(COMMAND) $(APK)
+
+.PHONY: android\:apktool
+android\:apktool: APK := $(lastword $(PARAMS))
+android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:apktool:
+	$(COMPOSE_ANDROID_BIN) run --rm \
+		-v "$(shell pwd)/$(APK):/$(APK):ro" \
+		apktool $(COMMAND) $(APK)
