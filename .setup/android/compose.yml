@@ -77,6 +77,30 @@ services:
             server:
                 condition: service_healthy
 
+    apkanalyzer:
+        <<: [*networks]
+        image: aironou/reverse-engineering:apkanalyzer
+        build:
+            <<: [*dockerfile]
+            target: apkanalyzer
+        profiles: ["tools"]
+
+    aapt2:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:aapt2
+        build:
+            <<: [ *dockerfile ]
+            target: aapt2
+        profiles: [ "tools" ]
+
+    apksigner:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:apksigner
+        build:
+            <<: [ *dockerfile ]
+            target: apksigner
+        profiles: [ "tools" ]
+
 volumes:
     android-avd:
     android:
