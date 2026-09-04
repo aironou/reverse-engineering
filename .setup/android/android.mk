@@ -8,7 +8,7 @@ COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE := $(COMPOSE_ANDROID_FILE_DIR)/emulator-h
 
 COMPOSE_ANDROID_BIN := docker compose -f $(COMPOSE_ANDROID_FILE)
 
-define ANDROID_HELP
+define android_help
 @printf '\n$(TEXT_BOLD)$(TEXT_BLUE)android:$(TEXT_RESET)\n'
 @printf '%b%b$(TEXT_RESET)|%b%b$(TEXT_RESET)\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'help android' '' 'print android related help message' \
@@ -24,27 +24,44 @@ define ANDROID_HELP
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:emulator' '' 'starts android emulator with ADB shell' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    headless' '' 'use headless emulator' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    attach' '' 'attach to running ADB shell' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    attach' '' 'attach to running ADB shell and open bash' \
 	'' '' '$(TEXT_CYAN)' 'make android:emulator [headless, attach]\n' \
-| column -s '|' -t -d -N command,description -W description -L | sed -e 's/^/  /'
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'projects/*/artifacts/*/apk/*.apk' '' 'copy APK file from container to host' \
+	'' '' '$(TEXT_CYAN)' 'make projects/example/artifacts/3141516/apk/example.apk\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apkanalyzer' '' 'exec apkanalyzer' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apkanalyzer command' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make android:apkanalyzer [command] [apk]\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:aapt2' '' 'exec aapt2' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'aapt2 command' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make android:apkanalyzer [command] [apk]\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apksigner' '' 'exec apksigner' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apksigner command' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make android:apksigner [command] [apk]\n' \
+| column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
 
-define ANDROID_CHOICE
+define android_choice
 $(if $(filter-out android,$(PARAMS)),,$(1))
 endef
 
 .PHONY: help
 help::
-	$(call ANDROID_CHOICE,$(ANDROID_HELP))
+	$(call android_choice,$(android_help))
 
 .PHONY: build
 build::
-	$(call ANDROID_CHOICE,$(COMPOSE_ANDROID_BIN) --profile "*" build $(if $(HAS_FORCE),--no-cache))
+	$(call android_choice,$(COMPOSE_ANDROID_BIN) --profile "*" build $(if $(HAS_FORCE),--no-cache))
 
 .PHONY: destroy
 destroy::
-	$(call ANDROID_CHOICE,$(COMPOSE_ANDROID_BIN) down $(if $(HAS_FORCE),-v))
+	$(call android_choice,$(COMPOSE_ANDROID_BIN) down $(if $(HAS_FORCE),-v))
 
 .PHONY: android\:emulator
 android\:emulator:
@@ -64,3 +81,27 @@ endif
 
 projects/%/artifacts/%/apk/%.apk:
 	$(COMPOSE_ANDROID_BIN) cp shell:$@ $@
+
+.PHONY: android\:apkanalyzer
+android\:apkanalyzer: APK := $(lastword $(PARAMS))
+android\:apkanalyzer: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:apkanalyzer:
+	$(COMPOSE_ANDROID_BIN) run --rm \
+		-v "$(shell pwd)/$(APK):/$(APK):ro" \
+		apkanalyzer $(COMMAND) $(APK)
+
+.PHONY: android\:aapt2
+android\:aapt2: APK := $(lastword $(PARAMS))
+android\:aapt2: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:aapt2:
+	$(COMPOSE_ANDROID_BIN) run --rm \
+		-v "$(shell pwd)/$(APK):/$(APK):ro" \
+		aapt2 $(COMMAND) $(APK)
+
+.PHONY: android\:apksigner
+android\:apksigner: APK := $(lastword $(PARAMS))
+android\:apksigner: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:apksigner:
+	$(COMPOSE_ANDROID_BIN) run --rm \
+		-v "$(shell pwd)/$(APK):/$(APK):ro" \
+		apksigner $(COMMAND) $(APK)
