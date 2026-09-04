@@ -1,6 +1,6 @@
-x-dockerfile: &dockerfile
+x-android-dockerfile: &android-dockerfile
     context: ../..
-    dockerfile: .setup/android/Dockerfile
+    dockerfile: .setup/android/android.Dockerfile
 
 x-networks: &networks
     extra_hosts: ["host.docker.internal:host-gateway"]
@@ -10,7 +10,7 @@ services:
         <<: [*networks]
         image: aironou/reverse-engineering:android-emulator
         build:
-            <<: [*dockerfile]
+            <<: [*android-dockerfile]
             target: emulator
         stop_grace_period: 1m
         healthcheck:
@@ -35,7 +35,7 @@ services:
     server:
         image: aironou/reverse-engineering:adb
         build:
-            <<: [*dockerfile]
+            <<: [*android-dockerfile]
             target: adb
         environment:
             ADB_TRACE: all
@@ -66,7 +66,7 @@ services:
         <<: [*networks]
         image: aironou/reverse-engineering:adb
         build:
-            <<: [*dockerfile]
+            <<: [*android-dockerfile]
             target: adb
         environment:
             ADB_SERVER_SOCKET: tcp:emulator:5037
@@ -81,7 +81,7 @@ services:
         <<: [*networks]
         image: aironou/reverse-engineering:apkanalyzer
         build:
-            <<: [*dockerfile]
+            <<: [*android-dockerfile]
             target: apkanalyzer
         profiles: ["tools"]
 
@@ -89,7 +89,7 @@ services:
         <<: [ *networks ]
         image: aironou/reverse-engineering:aapt2
         build:
-            <<: [ *dockerfile ]
+            <<: [ *android-dockerfile ]
             target: aapt2
         profiles: [ "tools" ]
 
@@ -97,7 +97,7 @@ services:
         <<: [ *networks ]
         image: aironou/reverse-engineering:apksigner
         build:
-            <<: [ *dockerfile ]
+            <<: [ *android-dockerfile ]
             target: apksigner
         profiles: [ "tools" ]
 
