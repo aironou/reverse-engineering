@@ -3,14 +3,14 @@ x-android-dockerfile: &android-dockerfile
     dockerfile: .setup/android/android.Dockerfile
 
 x-networks: &networks
-    extra_hosts: ["host.docker.internal:host-gateway"]
+    extra_hosts: [ "host.docker.internal:host-gateway" ]
 
 services:
     emulator:
-        <<: [*networks]
+        <<: [ *networks ]
         image: aironou/reverse-engineering:android-emulator
         build:
-            <<: [*android-dockerfile]
+            <<: [ *android-dockerfile ]
             target: emulator
         stop_grace_period: 1m
         healthcheck:
@@ -35,7 +35,7 @@ services:
     server:
         image: aironou/reverse-engineering:adb
         build:
-            <<: [*android-dockerfile]
+            <<: [ *android-dockerfile ]
             target: adb
         environment:
             ADB_TRACE: all
@@ -63,14 +63,14 @@ services:
             - android:/root/.android
 
     shell:
-        <<: [*networks]
+        <<: [ *networks ]
         image: aironou/reverse-engineering:adb
         build:
-            <<: [*android-dockerfile]
+            <<: [ *android-dockerfile ]
             target: adb
         environment:
             ADB_SERVER_SOCKET: tcp:emulator:5037
-        command: ["shell"]
+        command: [ "shell" ]
         stdin_open: true
         tty: true
         depends_on:
@@ -78,12 +78,12 @@ services:
                 condition: service_healthy
 
     apkanalyzer:
-        <<: [*networks]
+        <<: [ *networks ]
         image: aironou/reverse-engineering:apkanalyzer
         build:
-            <<: [*android-dockerfile]
+            <<: [ *android-dockerfile ]
             target: apkanalyzer
-        profiles: ["tools"]
+        profiles: [ "tools" ]
 
     aapt2:
         <<: [ *networks ]
@@ -99,6 +99,14 @@ services:
         build:
             <<: [ *android-dockerfile ]
             target: apksigner
+        profiles: [ "tools" ]
+
+    apktool:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:apktool
+        build:
+            context: ../..
+            dockerfile: .setup/android/apktool.Dockerfile
         profiles: [ "tools" ]
 
 volumes:
