@@ -494,3 +494,14 @@ create a new JSON file in project directory, using
 ```
 
 **this file should not contain another data that was not requested.**
+
+## verification
+
+after processing this skill flow:
+
+- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
+  exists.
+- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
+  is the only directory created by this skill.
+- confirm that there is a JSON file containing APK inspection data in
+  `projects/{{name}}/artifacts/{{version}}/analysis/inspect`.

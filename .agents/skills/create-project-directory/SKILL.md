@@ -23,11 +23,13 @@ project artifacts and report should be added to the project repository itself.**
 if user has not added a `git submodule` at `projects/{{project_name}}`, ask user
 for the submodule URL and add the submodule.
 
-### verification
+## verification
 
-after creating the project directory:
+after processing this skill flow:
 
-- confirm that `projects/{{project_name}}` exists
-- confirm that `projects/{{project_name}}` is a directory
-- confirm that `projects/{{project_name}}` is a `git submodule`
-- confirm that `projects/{{project_name}}` is an initialized `git submodule`
+- confirm that `projects/{{project_name}}` exists.
+- confirm that `projects/{{project_name}}` is a directory.
+- confirm that `projects/{{project_name}}` is a `git submodule`.
+- confirm that `projects/{{project_name}}` is an initialized `git submodule`.
+- confirm that `projects/{{project_name}}` is the only directory created by
+  this skill.

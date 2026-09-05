@@ -178,3 +178,18 @@ using `ADB shell`, run the command:
 ```shell
 pm uninstall {{package_name}}
 ```
+
+### stop ADB shell
+
+stop android emulator.
+
+## verification
+
+after processing this skill flow:
+
+- confirm that `projects/{{package_name}}/artifacts/{{package_version}}/apk`
+  exists.
+- confirm that `projects/{{package_name}}/artifacts/{{package_version}}/apk`
+  is the only directory created by this skill.
+- confirm that every APK file from `check package installation` exists in
+  `projects/{{package_name}}/artifacts/{{package_version}}/apk`.
