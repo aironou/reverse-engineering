@@ -23,5 +23,11 @@ project artifacts and report should be added to the project repository itself.**
 if user has not added a `git submodule` at `projects/{{project_name}}`, ask user
 for the submodule URL and add the submodule.
 
-**do not advance if `projects/{{project_name}}` does not exists or if it is not
-an initialized `git submodule`.**
+### verification
+
+after creating the project directory:
+
+- confirm that `projects/{{project_name}}` exists
+- confirm that `projects/{{project_name}}` is a directory
+- confirm that `projects/{{project_name}}` is a `git submodule`
+- confirm that `projects/{{project_name}}` is an initialized `git submodule`
