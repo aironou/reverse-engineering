@@ -23,9 +23,9 @@ if `ADB shell` is not available, run the command:
 make destroy android
 ```
 
-### verification
+## verification
 
-after stoping emulator, using `.setup/android/compose.yml`:
+after processing this skill flow, using `.setup/android/compose.yml`:
 
 - confirm that `emulator` is stopped
 - confirm that `server` is stopped

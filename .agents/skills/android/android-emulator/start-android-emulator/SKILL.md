@@ -28,9 +28,9 @@ to start **GUI android emulator**, using `terminal`, run the command:
 make android:emulator
 ```
 
-### verification
+## verification
 
-after starting emulator, using `.setup/android/compose.yml`:
+after processing this skill flow, using `.setup/android/compose.yml`:
 
 - confirm that `emulator` is running healthy
 - confirm that `server` is running healthy
