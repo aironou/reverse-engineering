@@ -8,10 +8,6 @@ description: |
 
 # android APK downloader
 
-## requirements
-
-- `ADB shell` available
-
 ## input
 
 to download an APK file, user should define the `{{package_name}}` (android

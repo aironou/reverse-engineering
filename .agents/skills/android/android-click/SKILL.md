@@ -6,10 +6,6 @@ description: |
 
 # android click
 
-## requirements
-
-- `ADB shell` available
-
 ## input
 
 to simulate a click, user should define the coordinates `{{x}}` and `{{y}}`

@@ -10,10 +10,6 @@ description: |
 
 # android APK inspect
 
-## requirement
-
-- `unzip` installed
-
 ## input
 
 to inspect an APK file, user should define the path to the APK file, also known
