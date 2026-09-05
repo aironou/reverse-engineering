@@ -7,10 +7,6 @@ description: |
 
 # android screen element search
 
-## requirements
-
-- `ADB shell` available
-
 ## input
 
 to search an element, user should define the element to be searched, using
