@@ -25,8 +25,11 @@ if `android_manifest` is not defined, using `terminal`, run the command:
 make android:apkanalyzer manifest print {{apk_file}}
 ```
 
-using the dumped XML, set `android_manifest` and keep it save until the end of
-session because this will be used to get values during inspection.
+you don't need to print the manifest to user.
+
+set `android_manifest` with the dumped XML and keep it saved until the end of
+session because this will be used to get values during inspection. after that,
+you can discard `android_manifest`.
 
 ### get intent filters
 
