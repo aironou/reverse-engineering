@@ -24,10 +24,11 @@ define android_help
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:emulator' '' 'starts android emulator with ADB shell' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    headless' '' 'use headless emulator' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator headless\n' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    attach' '' 'attach to running ADB shell and open bash' \
-	'' '' '$(TEXT_CYAN)' 'make android:emulator [headless, attach]\n' \
-	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'projects/*/artifacts/*/apk/*.apk' '' 'copy APK file from container to host' \
-	'' '' '$(TEXT_CYAN)' 'make projects/example/artifacts/3141516/apk/example.apk\n' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator attach\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    copy' '' 'copy file from emulator' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator copy [emulator path] [host path]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apkanalyzer' '' 'exec apkanalyzer' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
 	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apkanalyzer command' \
@@ -44,10 +45,11 @@ define android_help
 	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
 	'' '' '$(TEXT_CYAN)' 'make android:apksigner [command] [apk]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apktool' '' 'exec apktool' \
-	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apktool command' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
+	'$(TEXT_BRIGHT_BLUE)'  'options:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '' '' 'exec apktool command' \
 	'' '' '$(TEXT_CYAN)' 'make android:apktool [command] [apk]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    copy' '' 'copy file from apktool' \
+	'' '' '$(TEXT_CYAN)' 'make android:apktool copy [path]\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
@@ -69,23 +71,26 @@ destroy::
 	$(call android_choice,$(COMPOSE_ANDROID_BIN) down $(if $(HAS_FORCE),-v))
 
 .PHONY: android\:emulator
+android\:emulator: COMMAND := $(firstword $(PARAMS))
+android\:emulator: COMMAND_PARAMS := $(filter-out $(COMMAND),$(PARAMS))
+android\:emulator: APK := $(lastword $(COMMAND_PARAMS))
 android\:emulator:
 	xhost +si:localuser:root || exit $$?
-ifeq (,$(PARAMS))
+ifeq (,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
-else ifeq (headless,$(PARAMS))
+else ifeq (headless,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
-else ifeq (attach,$(PARAMS))
+else ifeq (attach,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) exec shell bash
+else ifeq (copy,$(firstword $(PARAMS)))
+	$(COMPOSE_ANDROID_BIN) exec shell /entrypoint.sh pull $(COMMAND_PARAMS)
+	$(COMPOSE_ANDROID_BIN) cp shell:$(APK) $(APK)
 else
 	@$(MAKE) help android
 endif
 	xhost -si:localuser:root
-
-projects/%/artifacts/%/apk/%.apk:
-	$(COMPOSE_ANDROID_BIN) cp shell:$@ $@
 
 .PHONY: android\:apkanalyzer
 android\:apkanalyzer: APK := $(lastword $(PARAMS))
@@ -112,9 +117,18 @@ android\:apksigner:
 		apksigner $(COMMAND) $(APK)
 
 .PHONY: android\:apktool
+android\:apktool: COMMAND := $(firstword $(PARAMS))
+android\:apktool: COMMAND_PARAMS := $(filter-out $(COMMAND),$(PARAMS))
 android\:apktool: APK := $(lastword $(PARAMS))
-android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:apktool: APKTOOL_COMMAND := $(filter-out $(APK),$(COMMAND_PARAMS))
 android\:apktool:
-	$(COMPOSE_ANDROID_BIN) run --rm \
+ifeq (,$(firstword $(PARAMS)))
+	$(COMPOSE_ANDROID_BIN) run \
 		-v "$(shell pwd)/$(APK):/$(APK):ro" \
-		apktool $(COMMAND) $(APK)
+		apktool $(APKTOOL_COMMAND) $(APK)
+else ifeq (copy,$(firstword $(PARAMS)))
+	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool
+	$(COMPOSE_ANDROID_BIN) cp apktool:$(COMMAND_PARAMS) $(COMMAND_PARAMS)
+else
+	@$(MAKE) help android
+endif
