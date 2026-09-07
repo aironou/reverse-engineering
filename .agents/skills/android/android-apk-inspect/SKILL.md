@@ -197,7 +197,7 @@ set `compile_sdk` with the value of compile SDK version.
 using `terminal`, run the command:
 
 ```shell
-make android:apksigner "verify --verbose --print-certs" {{apk_file}}
+make -- android:apksigner verify --verbose --print-certs {{apk_file}}
 ```
 
 using the command result, set `certificate_data` with properties as below:
