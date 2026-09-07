@@ -72,32 +72,6 @@ using `terminal`, run the command:
 make android:emulator attach
 ```
 
-### copy file or path from emulator to container
-
-to copy files from emulator to container, using `terminal` while `ADB shell`
-is running, run the command:
-
-```shell
-docker compose -f .setup/android/compose.yml exec shell /entrypoint.sh \
-  pull {{emulator_path}} {{container_path}}
-```
-
-where `{{emulator_path}}` is the path of APK file or directory on emulator and
-`{{container_path}}` is the path of APK file or directory on container.
-
-`{{emulator_path}}` is the result of `check package installation` and 
-`{{container_path}}` should reflect the directory at host, i.e., `projects/
-{{package_name}}/artifacts/{{package_version}}/apk`.
-
-**all filenames should be preserved.**
-
-to check if file or path are in the container, `attach shell to container`
-and run the command:
-
-```shell
-ls -lha {{container_path}}
-```
-
 ## flow
 
 ### start ADB shell
@@ -156,12 +130,15 @@ emulator and `copy file or path from emulator to container`.
 
 #### copy APK file to host
 
-for each APK file in container as `{{apk_file_in_container}}`, using `terminal`,
-run the command:
+for each file in `check package instalattion` action, as `emulator_path`, using
+`terminal`, run the command:
 
 ```shell
-make {{apk_file_in_container}}
+make android:emulator copy {{emulator_path}} {{host_path}}
 ```
+
+`host_path` should be `projects/{{package_name}}/artifacts/{{package_version}}
+/apk/{{timestamp without timezone}}-{{file name}}.apk`
 
 ### uninstall APK
 

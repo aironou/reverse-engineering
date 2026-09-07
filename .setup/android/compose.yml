@@ -76,6 +76,8 @@ services:
         depends_on:
             server:
                 condition: service_healthy
+        volumes:
+            - android-shell-projects:/projects
 
     apkanalyzer:
         <<: [ *networks ]
@@ -108,7 +110,11 @@ services:
             context: ../..
             dockerfile: .setup/android/apktool.Dockerfile
         profiles: [ "tools" ]
+        volumes:
+            - android-apktool-projects:/projects
 
 volumes:
     android-avd:
     android:
+    android-shell-projects:
+    android-apktool-projects:
