@@ -115,21 +115,6 @@ if the timeout expires, then `ask user to solve a problem`.
 
 ### copy APK files to host
 
-#### create project directory
-
-APK file should be added to `projects/{{package_name}}/artifacts
-/{{package_version}}/apk`, where `{{package_version}}` is the result of 
-`extract package version`.
-
-#### copy APK file to container
-
-`check package instalattion` to get path where the package is installed on
-emulator and `copy file or path from emulator to container`.
-
-**do not advance if a file or path are not in the container.**
-
-#### copy APK file to host
-
 for each file in `check package instalattion` action, as `emulator_path`, using
 `terminal`, run the command:
 
