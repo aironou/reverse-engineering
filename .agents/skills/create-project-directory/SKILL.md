@@ -27,9 +27,9 @@ for the submodule URL and add the submodule.
 
 after processing this skill flow:
 
-- confirm that `projects/{{project_name}}` exists.
-- confirm that `projects/{{project_name}}` is a directory.
-- confirm that `projects/{{project_name}}` is a `git submodule`.
-- confirm that `projects/{{project_name}}` is an initialized `git submodule`.
+- confirm that `projects/{{project_name}}` exists;
+- confirm that `projects/{{project_name}}` is a directory;
+- confirm that `projects/{{project_name}}` is a `git submodule`;
+- confirm that `projects/{{project_name}}` is an initialized `git submodule`;
 - confirm that `projects/{{project_name}}` is the only directory created by
   this skill.
