@@ -134,7 +134,9 @@ for each file in `check package instalattion` action, as `emulator_path`, using
 `terminal`, run the command:
 
 ```shell
-make android:emulator copy {{emulator_path}} {{host_path}}
+make android:emulator copy \
+  EMULATOR_PATH="{{emulator_path}}" \
+  HOST_PATH="{{host_path}}"
 ```
 
 `host_path` should be `projects/{{package_name}}/artifacts/{{package_version}}
