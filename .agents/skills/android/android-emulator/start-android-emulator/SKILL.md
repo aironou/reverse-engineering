@@ -32,7 +32,7 @@ make android:emulator
 
 after processing this skill flow, using `.setup/android/compose.yml`:
 
-- confirm that `emulator` is running healthy
-- confirm that `server` is running healthy
-- confirm that `shell` is running
-- confirm that there is a tty session to `shell`
+- confirm that `emulator` is running healthy;
+- confirm that `server` is running healthy;
+- confirm that `shell` is running;
+- confirm that there is a tty session to `shell`.

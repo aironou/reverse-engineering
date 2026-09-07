@@ -27,6 +27,6 @@ make destroy android
 
 after processing this skill flow, using `.setup/android/compose.yml`:
 
-- confirm that `emulator` is stopped
-- confirm that `server` is stopped
-- confirm that `shell` is stopped
+- confirm that `emulator` is stopped;
+- confirm that `server` is stopped;
+- confirm that `shell` is stopped.

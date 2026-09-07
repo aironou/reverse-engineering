@@ -461,8 +461,8 @@ inspect file should be added to `projects/{{name}}/artifacts/{{version}}
 
 #### generate JSON file
 
-create a new JSON file in project directory, using
-`{{file name}}-{{timestamp without timezone}}.json` as name, with the values as below:
+create a new JSON file in project directory, using `{{file name}}.json` as name,
+with the values as below:
 
 ```json
 {
@@ -500,8 +500,8 @@ create a new JSON file in project directory, using
 after processing this skill flow:
 
 - confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
-  exists.
+  exists;
 - confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
-  is the only directory created by this skill.
+  is the only directory created by this skill;
 - confirm that there is a JSON file containing APK inspection data in
   `projects/{{name}}/artifacts/{{version}}/analysis/inspect`.
