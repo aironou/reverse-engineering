@@ -85,6 +85,7 @@ destroy::
 .PHONY: android\:emulator
 android\:emulator:
 	xhost +si:localuser:root || exit $$?
+	$(COMPOSE_ANDROID_BIN) create --no-recreate shell
 ifeq (,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
@@ -94,6 +95,8 @@ else ifeq (headless,$(firstword $(PARAMS)))
 else ifeq (attach,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) exec shell bash
 else ifeq (copy,$(firstword $(PARAMS)))
+	mkdir -p $(shell dirname $(HOST_PATH))
+	$(COMPOSE_ANDROID_BIN) exec shell mkdir -p $(shell dirname $(HOST_PATH))
 	$(COMPOSE_ANDROID_BIN) exec shell /entrypoint.sh pull $(EMULATOR_PATH) $(HOST_PATH)
 	$(COMPOSE_ANDROID_BIN) cp "shell:$(HOST_PATH)" "$(HOST_PATH)"
 else
@@ -124,6 +127,7 @@ android\:apktool: APK := $(lastword $(PARAMS))
 android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apktool:
 ifeq (copy,$(firstword $(PARAMS)))
+	mkdir -p $(shell dirname $(HOST_PATH))
 	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool
 	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
 else
