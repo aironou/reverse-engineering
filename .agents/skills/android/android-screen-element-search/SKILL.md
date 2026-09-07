@@ -16,10 +16,8 @@ element description or text.
 
 ### search element at screen
 
-to search for an element, save and print the current UI hierarchy to find the
-element.
-
-to save and print the current UI hierarchy, using `ADB shell`, run the commands:
+to search for an element, save the current UI hierarchy to find the element,
+using `ADB shell`, run the commands:
 
 ```shell
 uiautomator dump /data/local/tmp/window_dump.xml
@@ -27,7 +25,8 @@ cat /data/local/tmp/window_dump.xml
 ```
 
 keep the result until the current screen state is understood, but update the
-result every time a new search is required.
+result every time a new search is required. after that, you can discard the
+result.
 
 evaluate attributes in this order: `resource-id`, `text`, `content-desc`, then
 `class`, `clickable`, `enabled`, and `bounds`. a non-empty `resource-id` may be
