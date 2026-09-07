@@ -15,47 +15,59 @@ define android_help
 	'' '' '$(TEXT_CYAN)' 'make help android\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'build android' '' 'build android related containers'\
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '    -B, --always-make' '' 'do not use cache to build'\
+	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'do not use cache to build'\
 	'' '' '$(TEXT_CYAN)' 'make build android [-B, --always-make]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'destroy android' '' 'destroy android related containers' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    -B, --always-make' '' 'also destroy volumes' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'also destroy volumes' \
 	'' '' '$(TEXT_CYAN)' 'make destroy android [-B, --always-make]\n' \
-	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:emulator' '' 'starts android emulator with ADB shell' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:emulator' '' 'start GUI Android emulator with ADB shell' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator\n' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    headless' '' 'use headless emulator' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  headless' '' 'use headless emulator' \
 	'' '' '$(TEXT_CYAN)' 'make android:emulator headless\n' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    attach' '' 'attach to running ADB shell and open bash' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  attach' '' 'open Bash in the running emulator shell container' \
 	'' '' '$(TEXT_CYAN)' 'make android:emulator attach\n' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    copy' '' 'copy file from emulator' \
-	'' '' '$(TEXT_CYAN)' 'make android:emulator copy [emulator path] [host path]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  copy' '' 'copy file from emulator' \
+	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    EMULATOR_PATH' '' 'path to file in emulator' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'destination path on host' \
+	'' '' '$(TEXT_CYAN)' 'make android:emulator copy EMULATOR_PATH="[emulator path]" HOST_PATH="[host path]"\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apkanalyzer' '' 'exec apkanalyzer' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apkanalyzer command' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
-	'' '' '$(TEXT_CYAN)' 'make android:apkanalyzer [command] [apk]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'apkanalyzer command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:apkanalyzer [command] [apk]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:aapt2' '' 'exec aapt2' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'aapt2 command' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
-	'' '' '$(TEXT_CYAN)' 'make android:aapt2 [command] [apk]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'aapt2 command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:aapt2 [command] [apk]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apksigner' '' 'exec apksigner' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '    command' '' 'apksigner command' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    apk' '' 'path to APK file' \
-	'' '' '$(TEXT_CYAN)' 'make android:apksigner [command] [apk]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'apksigner command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:apksigner [command] [apk]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:apktool' '' 'exec apktool' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'apktool command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:apktool [command] [apk]\n' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '' '' 'exec apktool command' \
-	'' '' '$(TEXT_CYAN)' 'make android:apktool [command] [apk]\n' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '    copy' '' 'copy file from apktool' \
-	'' '' '$(TEXT_CYAN)' 'make android:apktool copy [path]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  copy' '' 'copy file from apktool container to the same path on host' \
+	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'path to file in apktool and destination path on host' \
+	'' '' '$(TEXT_CYAN)' 'make android:apktool copy HOST_PATH="[host path]"\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
 
 define android_choice
 $(if $(filter-out android,$(PARAMS)),,$(1))
+endef
+
+define android_command_volume_choice
+$(if $(2),$(COMPOSE_ANDROID_BIN) run --rm -v "$(shell pwd)/$(3):/$(3):ro" $(1) $(2) $(3),$(COMPOSE_ANDROID_BIN) run --rm $(1) $(2))
 endef
 
 .PHONY: help
@@ -68,12 +80,9 @@ build::
 
 .PHONY: destroy
 destroy::
-	$(call android_choice,$(COMPOSE_ANDROID_BIN) down $(if $(HAS_FORCE),-v))
+	$(call android_choice,$(COMPOSE_ANDROID_BIN) down --remove-orphans $(if $(HAS_FORCE),-v))
 
 .PHONY: android\:emulator
-android\:emulator: COMMAND := $(firstword $(PARAMS))
-android\:emulator: COMMAND_PARAMS := $(filter-out $(COMMAND),$(PARAMS))
-android\:emulator: APK := $(lastword $(COMMAND_PARAMS))
 android\:emulator:
 	xhost +si:localuser:root || exit $$?
 ifeq (,$(firstword $(PARAMS)))
@@ -85,8 +94,8 @@ else ifeq (headless,$(firstword $(PARAMS)))
 else ifeq (attach,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) exec shell bash
 else ifeq (copy,$(firstword $(PARAMS)))
-	$(COMPOSE_ANDROID_BIN) exec shell /entrypoint.sh pull $(COMMAND_PARAMS)
-	$(COMPOSE_ANDROID_BIN) cp shell:$(APK) $(APK)
+	$(COMPOSE_ANDROID_BIN) exec shell /entrypoint.sh pull $(EMULATOR_PATH) $(HOST_PATH)
+	$(COMPOSE_ANDROID_BIN) cp "shell:$(HOST_PATH)" "$(HOST_PATH)"
 else
 	@$(MAKE) help android
 endif
@@ -96,39 +105,27 @@ endif
 android\:apkanalyzer: APK := $(lastword $(PARAMS))
 android\:apkanalyzer: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apkanalyzer:
-	$(COMPOSE_ANDROID_BIN) run --rm \
-		-v "$(shell pwd)/$(APK):/$(APK):ro" \
-		apkanalyzer $(COMMAND) $(APK)
+	$(call android_command_volume_choice,apkanalyzer,$(COMMAND),$(APK))
 
 .PHONY: android\:aapt2
 android\:aapt2: APK := $(lastword $(PARAMS))
 android\:aapt2: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:aapt2:
-	$(COMPOSE_ANDROID_BIN) run --rm \
-		-v "$(shell pwd)/$(APK):/$(APK):ro" \
-		aapt2 $(COMMAND) $(APK)
+	$(call android_command_volume_choice,aapt2,$(COMMAND),$(APK))
 
 .PHONY: android\:apksigner
 android\:apksigner: APK := $(lastword $(PARAMS))
 android\:apksigner: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apksigner:
-	$(COMPOSE_ANDROID_BIN) run --rm \
-		-v "$(shell pwd)/$(APK):/$(APK):ro" \
-		apksigner $(COMMAND) $(APK)
+	$(call android_command_volume_choice,apksigner,$(COMMAND),$(APK))
 
 .PHONY: android\:apktool
-android\:apktool: COMMAND := $(firstword $(PARAMS))
-android\:apktool: COMMAND_PARAMS := $(filter-out $(COMMAND),$(PARAMS))
 android\:apktool: APK := $(lastword $(PARAMS))
-android\:apktool: APKTOOL_COMMAND := $(filter-out $(APK),$(COMMAND_PARAMS))
+android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apktool:
-ifeq (,$(firstword $(PARAMS)))
-	$(COMPOSE_ANDROID_BIN) run \
-		-v "$(shell pwd)/$(APK):/$(APK):ro" \
-		apktool $(APKTOOL_COMMAND) $(APK)
-else ifeq (copy,$(firstword $(PARAMS)))
+ifeq (copy,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool
-	$(COMPOSE_ANDROID_BIN) cp apktool:$(COMMAND_PARAMS) $(COMMAND_PARAMS)
+	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
 else
-	@$(MAKE) help android
+	$(call android_command_volume_choice,apktool,$(COMMAND),$(APK))
 endif
