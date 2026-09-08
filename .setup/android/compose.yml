@@ -77,7 +77,7 @@ services:
             server:
                 condition: service_healthy
         volumes:
-            - android-shell-projects:/projects
+            - android-projects:/projects
 
     apkanalyzer:
         <<: [ *networks ]
@@ -112,9 +112,11 @@ services:
         profiles: [ "tools" ]
         volumes:
             - android-apktool-projects:/projects
+            - android-projects:/projects
 
 volumes:
-    android-avd:
     android:
-    android-shell-projects:
-    android-apktool-projects:
+        external: true
+    android-avd:
+        external: true
+    android-projects:
