@@ -56,6 +56,16 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'path to file in apktool and destination path on host' \
 	'' '' '$(TEXT_CYAN)' 'make android:apktool copy HOST_PATH="[host path]"\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:jadx' '' 'exec jadx' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'jadx command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  apk' '' 'path to APK file' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:jadx [command] [apk]\n' \
+	'$(TEXT_BRIGHT_BLUE)'  'options:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '  copy' '' 'copy file from jadx container to the same path on host' \
+	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'path to file in jadx and destination path on host' \
+	'' '' '$(TEXT_CYAN)' 'make android:jadx copy HOST_PATH="[host path]"\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
@@ -128,4 +138,16 @@ ifeq (copy,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
 else
 	$(call android_command_volume_choice,apktool,$(COMMAND),$(APK))
+endif
+
+.PHONY: android\:jadx
+android\:jadx: APK := $(lastword $(PARAMS))
+android\:jadx: COMMAND := $(filter-out $(APK),$(PARAMS))
+android\:jadx:
+ifeq (copy,$(firstword $(PARAMS)))
+	mkdir -p $(shell dirname $(HOST_PATH))
+	$(COMPOSE_ANDROID_BIN) create --no-recreate jadx
+	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
+else
+	$(call android_command_volume_choice,jadx,$(COMMAND),$(APK))
 endif

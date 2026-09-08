@@ -111,7 +111,16 @@ services:
             dockerfile: .setup/android/apktool.Dockerfile
         profiles: [ "tools" ]
         volumes:
-            - android-apktool-projects:/projects
+            - android-projects:/projects
+
+    jadx:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:jadx
+        build:
+            context: ../..
+            dockerfile: .setup/android/jadx.Dockerfile
+        profiles: [ "tools" ]
+        volumes:
             - android-projects:/projects
 
 volumes:
