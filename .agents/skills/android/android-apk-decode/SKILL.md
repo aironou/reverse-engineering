@@ -8,7 +8,7 @@ description: decode APK file. use when need to decode an APK.
 ## input
 
 to decode an APK file, user should define the path to the APK file, also known
-as `{{apk_file}}`.
+as `apk_file`.
 
 ## flow
 
@@ -17,7 +17,7 @@ as `{{apk_file}}`.
 set `output` with the value `projects/{{package_name}}/artifacts
 /{{package_version}}/apk/decoded/{{APK file name}}`.
 
-**missing information to set `output` should be obtained inspecting APK file.** 
+**missing information to set `output` should be obtained inspecting APK file.**
 
 using `terminal`, run the command:
 
