@@ -134,8 +134,9 @@ android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apktool:
 ifeq (copy,$(firstword $(PARAMS)))
 	mkdir -p $(shell dirname $(HOST_PATH))
-	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool
-	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
+	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool; \
+	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)" || true; \
+	$(COMPOSE_ANDROID_BIN) rm -f apktool
 else
 	$(call android_command_volume_choice,apktool,$(COMMAND),$(APK))
 endif
@@ -146,8 +147,9 @@ android\:jadx: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:jadx:
 ifeq (copy,$(firstword $(PARAMS)))
 	mkdir -p $(shell dirname $(HOST_PATH))
-	$(COMPOSE_ANDROID_BIN) create --no-recreate jadx
-	$(COMPOSE_ANDROID_BIN) cp "apktool:$(HOST_PATH)" "$(HOST_PATH)"
+	$(COMPOSE_ANDROID_BIN) create --no-recreate jadx; \
+	$(COMPOSE_ANDROID_BIN) cp "jadx:$(HOST_PATH)" "$(HOST_PATH)" || true; \
+	$(COMPOSE_ANDROID_BIN) rm -f jadx
 else
 	$(call android_command_volume_choice,jadx,$(COMMAND),$(APK))
 endif
