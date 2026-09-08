@@ -26,8 +26,6 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '  headless' '' 'use headless emulator' \
 	'' '' '$(TEXT_CYAN)' 'make android:emulator headless\n' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '  attach' '' 'open Bash in the running emulator shell container' \
-	'' '' '$(TEXT_CYAN)' 'make android:emulator attach\n' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '  copy' '' 'copy file from emulator' \
 	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    EMULATOR_PATH' '' 'path to file in emulator' \
@@ -92,8 +90,6 @@ ifeq (,$(firstword $(PARAMS)))
 else ifeq (headless,$(firstword $(PARAMS)))
 	$(COMPOSE_ANDROID_BIN) -f $(COMPOSE_ANDROID_EMULATOR_HEADLESS_FILE) run --rm -it shell || true; \
 	$(MAKE) destroy android
-else ifeq (attach,$(firstword $(PARAMS)))
-	$(COMPOSE_ANDROID_BIN) exec shell bash
 else ifeq (copy,$(firstword $(PARAMS)))
 	mkdir -p $(shell dirname $(HOST_PATH))
 	$(COMPOSE_ANDROID_BIN) exec shell mkdir -p $(shell dirname $(HOST_PATH))

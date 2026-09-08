@@ -64,14 +64,6 @@ using `ADB shell`, run the command:
 dumpsys package {{package_name}} | grep -i versioncode
 ```
 
-### attach shell to container
-
-using `terminal`, run the command:
-
-```shell
-make android:emulator attach
-```
-
 ## flow
 
 ### start ADB shell
@@ -130,12 +122,6 @@ make android:emulator copy \
 ### uninstall APK
 
 **if `preinstalled=true`, skip uninstall APK steps.**
-
-`attach shell to container` and, using the new shell, run the command:
-
-```shell
-rm -rdfv projects/{{package_name}}/artifacts/{{package_version}}/apk
-```
 
 using `ADB shell`, run the command:
 
