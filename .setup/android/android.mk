@@ -65,7 +65,7 @@ $(if $(filter-out android,$(PARAMS)),,$(1))
 endef
 
 define android_command_volume_choice
-$(if $(2),$(COMPOSE_ANDROID_BIN) run --rm -v "$(shell pwd)/$(3):/$(3):ro" $(1) $(2) $(3),$(COMPOSE_ANDROID_BIN) run --rm $(1) $(2))
+$(if $(2),$(COMPOSE_ANDROID_BIN) run --rm -v "$(shell pwd)/$(3):/$(3):ro" $(1) $(2) $(3),$(COMPOSE_ANDROID_BIN) run --rm $(1) $(3))
 endef
 
 .PHONY: help
