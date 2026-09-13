@@ -17,6 +17,12 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' ''\
 	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'do not use cache to build'\
 	'' '' '$(TEXT_CYAN)' 'make build android [-B, --always-make]\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'build:android:<service>' '' 'build a specific android related container' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' '' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  service' '' 'emulator, apkanalyzer, aapt2, apksigner, apktool or jadx' \
+	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'do not use cache to build' \
+	'' '' '$(TEXT_CYAN)' 'make build:android:[service] [-B, --always-make]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'destroy android' '' 'destroy android related containers' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'also destroy volumes' \
@@ -70,6 +76,10 @@ define android_help
 @echo $(DIVIDER)
 endef
 
+define android_build
+$(COMPOSE_ANDROID_BIN) build $(1) $(if $(HAS_FORCE),--no-cache)
+endef
+
 define android_choice
 $(if $(filter-out android,$(PARAMS)),,$(1))
 endef
@@ -90,8 +100,12 @@ build::
 destroy::
 	$(call android_choice,$(COMPOSE_ANDROID_BIN) down --remove-orphans $(if $(HAS_FORCE),-v))
 
+.PHONY: build\:android\:emulator
+build\:android\:emulator:
+	$(call android_build,shell)
+
 .PHONY: android\:emulator
-android\:emulator:
+android\:emulator: build\:android\:emulator
 	xhost +si:localuser:root || exit $$?
 	$(COMPOSE_ANDROID_BIN) create --no-recreate shell
 ifeq (,$(firstword $(PARAMS)))
@@ -110,28 +124,44 @@ else
 endif
 	xhost -si:localuser:root
 
+.PHONY: build\:android\:apkanalyzer
+build\:android\:apkanalyzer:
+	$(call android_build,apkanalyzer)
+
 .PHONY: android\:apkanalyzer
 android\:apkanalyzer: APK := $(lastword $(PARAMS))
 android\:apkanalyzer: COMMAND := $(filter-out $(APK),$(PARAMS))
-android\:apkanalyzer:
+android\:apkanalyzer: build\:android\:apkanalyzer
 	$(call android_command_volume_choice,apkanalyzer,$(COMMAND),$(APK))
+
+.PHONY: build\:android\:aapt2
+build\:android\:aapt2:
+	$(call android_build,aapt2)
 
 .PHONY: android\:aapt2
 android\:aapt2: APK := $(lastword $(PARAMS))
 android\:aapt2: COMMAND := $(filter-out $(APK),$(PARAMS))
-android\:aapt2:
+android\:aapt2: build\:android\:aapt2
 	$(call android_command_volume_choice,aapt2,$(COMMAND),$(APK))
+
+.PHONY: build\:android\:apksigner
+build\:android\:apksigner:
+	$(call android_build,apksigner)
 
 .PHONY: android\:apksigner
 android\:apksigner: APK := $(lastword $(PARAMS))
 android\:apksigner: COMMAND := $(filter-out $(APK),$(PARAMS))
-android\:apksigner:
+android\:apksigner: build\:android\:apksigner
 	$(call android_command_volume_choice,apksigner,$(COMMAND),$(APK))
+
+.PHONY: build\:android\:apktool
+build\:android\:apktool:
+	$(call android_build,apktool)
 
 .PHONY: android\:apktool
 android\:apktool: APK := $(lastword $(PARAMS))
 android\:apktool: COMMAND := $(filter-out $(APK),$(PARAMS))
-android\:apktool:
+android\:apktool: build\:android\:apktool
 ifeq (copy,$(firstword $(PARAMS)))
 	mkdir -p $(shell dirname $(HOST_PATH))
 	$(COMPOSE_ANDROID_BIN) create --no-recreate apktool; \
@@ -141,10 +171,14 @@ else
 	$(call android_command_volume_choice,apktool,$(COMMAND),$(APK))
 endif
 
+.PHONY: build\:android\:jadx
+build\:android\:jadx:
+	$(call android_build,jadx)
+
 .PHONY: android\:jadx
 android\:jadx: APK := $(lastword $(PARAMS))
 android\:jadx: COMMAND := $(filter-out $(APK),$(PARAMS))
-android\:jadx:
+android\:jadx: build\:android\:jadx
 ifeq (copy,$(firstword $(PARAMS)))
 	mkdir -p $(shell dirname $(HOST_PATH))
 	$(COMPOSE_ANDROID_BIN) create --no-recreate jadx; \
