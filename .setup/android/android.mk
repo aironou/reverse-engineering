@@ -19,7 +19,7 @@ define android_help
 	'' '' '$(TEXT_CYAN)' 'make build android [-B, --always-make]\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'build:android:<service>' '' 'build a specific android related container' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' '' \
-	'$(TEXT_BRIGHT_MAGENTA)'  '  service' '' 'emulator, apkanalyzer, aapt2, apksigner, apktool or jadx' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  service' '' 'emulator, apkanalyzer, aapt2, apksigner, apktool, jadx or tree-sitter' \
 	'$(TEXT_BRIGHT_BLUE)'  'options:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '  -B, --always-make' '' 'do not use cache to build' \
 	'' '' '$(TEXT_CYAN)' 'make build:android:[service] [-B, --always-make]\n' \
@@ -72,6 +72,11 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'path to file in jadx and destination path on host' \
 	'' '' '$(TEXT_CYAN)' 'make android:jadx copy HOST_PATH="[host path]"\n' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:tree-sitter' '' 'exec tree-sitter on decompiled sources' \
+	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
+	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'tree-sitter command and options' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  decompiled_path' '' 'path to decompiled application' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:tree-sitter [command] [decompiled path]\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
@@ -187,3 +192,15 @@ ifeq (copy,$(firstword $(PARAMS)))
 else
 	$(call android_command_volume_choice,jadx,$(COMMAND),$(APK))
 endif
+
+.PHONY: build\:android\:tree-sitter
+build\:android\:tree-sitter:
+	$(call android_build,tree-sitter)
+
+.PHONY: android\:tree-sitter
+android\:tree-sitter: DECOMPILED_PATH := $(lastword $(PARAMS))
+android\:tree-sitter: COMMAND := $(filter-out $(DECOMPILED_PATH),$(PARAMS))
+android\:tree-sitter: build\:android\:tree-sitter
+	@find $(DECOMPILED_PATH)/sources -type f -printf '/%p\n' > $(DECOMPILED_PATH)/sources.txt
+	$(call android_command_volume_choice,tree-sitter,$(COMMAND),$(DECOMPILED_PATH)) || true
+	@rm $(DECOMPILED_PATH)/sources.txt

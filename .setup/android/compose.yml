@@ -123,6 +123,13 @@ services:
         volumes:
             - android-projects:/projects
 
+    tree-sitter:
+        <<: [ *networks ]
+        image: aironou/reverse-engineering:android-tree-sitter
+        build:
+            dockerfile: tree-sitter.Dockerfile
+        profiles: [ "tools" ]
+
 volumes:
     android:
         external: true
