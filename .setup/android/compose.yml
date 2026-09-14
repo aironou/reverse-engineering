@@ -1,6 +1,5 @@
 x-android-dockerfile: &android-dockerfile
-    context: ../..
-    dockerfile: .setup/android/android.Dockerfile
+    dockerfile: android.Dockerfile
 
 x-networks: &networks
     extra_hosts: [ "host.docker.internal:host-gateway" ]
@@ -107,8 +106,7 @@ services:
         <<: [ *networks ]
         image: aironou/reverse-engineering:apktool
         build:
-            context: ../..
-            dockerfile: .setup/android/apktool.Dockerfile
+            dockerfile: apktool.Dockerfile
         profiles: [ "tools" ]
         volumes:
             - android-projects:/projects
@@ -117,8 +115,7 @@ services:
         <<: [ *networks ]
         image: aironou/reverse-engineering:jadx
         build:
-            context: ../..
-            dockerfile: .setup/android/jadx.Dockerfile
+            dockerfile: jadx.Dockerfile
         profiles: [ "tools" ]
         volumes:
             - android-projects:/projects
