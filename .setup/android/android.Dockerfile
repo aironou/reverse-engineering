@@ -63,10 +63,12 @@ RUN ${ANDROID_TOOLS_BIN_FOLDER}/android --sdk "${ANDROID_HOME}" sdk install \
 
 RUN mkdir -p ${ANDROID_AVD_CREATED_HOME} \
     && ${ANDROID_TOOLS_BIN_FOLDER}/avdmanager -s create avd \
-    --force \
-    --path ${ANDROID_AVD_CREATED_HOME} \
-    --package "system-images;android-${ANDROID_API_LEVEL};google_apis_playstore;${ANDROID_ABI}" \
-    --name ${ANDROID_AVD_NAME}
+        --force \
+        --path ${ANDROID_AVD_CREATED_HOME} \
+        --package "system-images;android-${ANDROID_API_LEVEL};google_apis_playstore;${ANDROID_ABI}" \
+        --name ${ANDROID_AVD_NAME} \
+    && sed -i 's/^hw.keyboard=.*/hw.keyboard=yes/' \
+    ${ANDROID_AVD_CREATED_HOME}/config.ini
 
 FROM base AS emulator-dependencies
 

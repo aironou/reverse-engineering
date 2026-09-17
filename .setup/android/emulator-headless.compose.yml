@@ -9,6 +9,5 @@ services:
             "-no-window",
             "-accel", "on",
             "-gpu", "host",
-            "-prop", "hw.keyboard=yes",
             "-no-snapshot-load"
         ]
