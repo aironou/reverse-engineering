@@ -34,7 +34,10 @@ set `output` with the value `projects/{{package_name}}/artifacts
 using `terminal`, run the command:
 
 ```shell
-make -- android:jadx --output-dir "{{output}}" "{{apk_file}}"
+make -- android:jadx \
+  --no-res \
+  --no-debug-info \
+  --output-dir "{{output}}" "{{apk_file}}"
 ```
 
 ### copy decompiled APK to host
