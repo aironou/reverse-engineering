@@ -8,6 +8,5 @@ services:
             "-no-audio",
             "-accel", "on",
             "-gpu", "host",
-            "-prop", "hw.keyboard=yes",
             "-no-snapshot-save"
         ]
