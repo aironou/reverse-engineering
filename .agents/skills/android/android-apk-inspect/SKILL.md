@@ -88,9 +88,9 @@ the user, set a new `certificate` with properties as below:
 for each `domain-config` node in the node defined by the user, set a new
 `domain_config` with properties as below:
 
-| property                      | attribute                   |
-|-------------------------------|-----------------------------|
-| `cleartext_traffic_permitted` | `cleartextTrafficPermitted` |
+| property                       | attribute                   |
+|--------------------------------|-----------------------------|
+| `clear_text_traffic_permitted` | `cleartextTrafficPermitted` |
 
 for each `domain` node in `domain-config` node, set a new `domain` with
 properties as below:
@@ -100,7 +100,7 @@ properties as below:
 | `include_subdomains` | `includeSubdomains` |
 | `domain`             |                     |
 
-set `domain_config.domains` with the `domain-config` list.
+set `domain_config.domains` with the `domain` list.
 
 for `pin-set` node in `domain-config` node, set a new `pin_set` with properties
 as below:
@@ -123,10 +123,11 @@ set `domain_config.pin_set` with `pin_set`.
 set `domain_config.certificates` with the `certificates` of `domain-config`
 node.
 
-set `domain_config.domains_config` with the `domain config` list in current
-`domain-config` node.
+for each direct child `domain-config` node in the current `domain-config` node
+recursively apply the `get domain config` action and add the resulting
+`domain_config` to a new `domain_config.domains_config` list.
 
-for each `domain-config` node in current `domain-config` node
+set `domain_config.domains_config` with the `domains_config` list.
 
 ## flow
 
@@ -430,20 +431,23 @@ set `uses_features` with the `uses_feature` list.
 
 #### network security config
 
+if `application.network_security_config` exists, then set `nsc_file` with its
+value removing `@` of the value. else, do not inspect network security config
+and set `network_security_config={}`.
+
 using `terminal`, run the command:
 
 ```shell
-make android:apkanalyzer resource xml --file res/{{nsc}}.xml {{apk_file}}
+make android:apkanalyzer resources xml --file res/{{nsc_file}}.xml {{apk_file}}
 ```
 
-where `{{nsc}}` is the value of `application.network_security_config`. set
-`nsc` with the node `network-security-config` in command value.
+set `nsc` with the node `network-security-config` in command value.
 
 for `base-config` node in `nsc`, set `base_config` with properties as below:
 
 | property               | attribute                   |
 |------------------------|-----------------------------|
-| `clear_text_permitted` | `clearTextTrafficPermitted` |
+| `clear_text_permitted` | `cleartextTrafficPermitted` |
 
 set `base_config.certificates` with the `certificates` of `base-config` node.
 
@@ -460,7 +464,7 @@ set `network_security_config.debug_override.certificates` with the
 #### create project directory
 
 inspect file should be added to `projects/{{name}}/artifacts/{{version}}
-/analysis/inspect`.
+/analysis/inspection`.
 
 #### generate JSON file
 
@@ -502,9 +506,9 @@ with the values as below:
 
 after processing this skill flow:
 
-- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
+- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspection`
   exists;
-- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspect`
+- confirm that `projects/{{name}}/artifacts/{{version}}/analysis/inspection`
   is the only directory created by this skill;
 - confirm that there is a JSON file containing APK inspection data in
-  `projects/{{name}}/artifacts/{{version}}/analysis/inspect`.
+  `projects/{{name}}/artifacts/{{version}}/analysis/inspection`.
