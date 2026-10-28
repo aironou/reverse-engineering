@@ -30,10 +30,22 @@ RUN git clone -b v0.23.5 --single-branch https://github.com/tree-sitter/tree-sit
     && git clone -b v0.24.8 --single-branch https://github.com/tree-sitter/tree-sitter-json.git \
     && git clone --single-branch https://github.com/dorgnarg/tree-sitter-xml.git
 
+FROM base AS build-queries
+
+WORKDIR /opt
+
+COPY config/tree-sitter/queries queries
+
+RUN mkdir build \
+    && for LANGUAGE in $(ls queries); do \
+        cat queries/$LANGUAGE/*.scm > build/$LANGUAGE.scm; \
+    done
+
 FROM base
 
 COPY --from=build --chmod=+x /opt/tree-sitter/target/release/tree-sitter /opt/tree-sitter/tree-sitter
 COPY --from=build-grammars /opt /opt/tree-sitter/grammars
+COPY --from=build-queries /opt/build /opt/tree-sitter/queries
 
 COPY config/tree-sitter/config.json /root/.config/tree-sitter/config.json
 
