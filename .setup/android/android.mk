@@ -72,11 +72,11 @@ define android_help
 	'$(TEXT_BRIGHT_BLUE)'  '  arguments:' '' '' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '    HOST_PATH' '' 'path to file in jadx and destination path on host' \
 	'' '' '$(TEXT_CYAN)' 'make android:jadx copy HOST_PATH="[host path]"\n' \
-	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:tree-sitter' '' 'exec tree-sitter on decompiled sources' \
+	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'android:tree-sitter' '' 'exec tree-sitter query on decompiled sources' \
 	'$(TEXT_BRIGHT_BLUE)'  'arguments:' '' ''\
-	'$(TEXT_BRIGHT_MAGENTA)'  '  command' '' 'tree-sitter command and options' \
 	'$(TEXT_BRIGHT_MAGENTA)'  '  decompiled_path' '' 'path to decompiled application' \
-	'' '' '$(TEXT_CYAN)' 'make -- android:tree-sitter [command] [decompiled path]\n' \
+	'$(TEXT_BRIGHT_MAGENTA)'  '  languages' '' 'c, cpp, java, javascript, json, kotlin or xml (all by default)' \
+	'' '' '$(TEXT_CYAN)' 'make -- android:tree-sitter [decompiled path] [languages]\n' \
 | column -s '|' -t -d -N command,description -L | sed -e 's/^/  /'
 @echo $(DIVIDER)
 endef
@@ -92,6 +92,31 @@ endef
 define android_command_volume_choice
 $(if $(2),$(COMPOSE_ANDROID_BIN) run --rm -v "$(shell pwd)/$(3):/$(3):ro" $(1) $(2) $(3),$(COMPOSE_ANDROID_BIN) run --rm $(1) $(3))
 endef
+
+define android_decompiled_sources
+find $(shell dirname $(1))/sources -type f \( $(2) \) -printf '/%p\n' > $(1)
+endef
+
+projects/android/%/c.sources:
+	$(call android_decompiled_sources,$@,-name '*.c' -o -name '*.h')
+
+projects/%/cpp.sources:
+	$(call android_decompiled_sources,$@,-name '*.cc' -o -name '*.cpp' -o -name '*.cxx' -o -name '*.c++' -o -name '*.hh' -o -name '*.hpp' -o -name '*.hxx' -o -name '*.h++')
+
+projects/%/java.sources:
+	$(call android_decompiled_sources,$@,-name '*.java' )
+
+projects/%/javascript.sources:
+	$(call android_decompiled_sources,$@,-name '*.js' -o -name '*.mjs' -o -name '*.cjs')
+
+projects/%/json.sources:
+	$(call android_decompiled_sources,$@,-name '*.json' )
+
+projects/%/kotlin.sources:
+	$(call android_decompiled_sources,$@,-name '*.kt' -o -name '*.kts')
+
+projects/%/xml.sources:
+	$(call android_decompiled_sources,$@,-name '*.xml' )
 
 .PHONY: help
 help::
@@ -197,10 +222,13 @@ endif
 build\:android\:tree-sitter:
 	$(call android_build,tree-sitter)
 
+.SECONDEXPANSION:
 .PHONY: android\:tree-sitter
-android\:tree-sitter: DECOMPILED_PATH := $(lastword $(PARAMS))
-android\:tree-sitter: COMMAND := $(filter-out $(DECOMPILED_PATH),$(PARAMS))
+android\:tree-sitter: DECOMPILED_PATH := $(firstword $(PARAMS))
+android\:tree-sitter: LANGUAGES := $(or $(strip $(filter-out $(DECOMPILED_PATH),$(PARAMS))),c cpp java javascript json kotlin xml)
 android\:tree-sitter: build\:android\:tree-sitter
-	@find $(DECOMPILED_PATH)/sources -type f -printf '/%p\n' > $(DECOMPILED_PATH)/sources.txt
-	$(call android_command_volume_choice,tree-sitter,$(COMMAND),$(DECOMPILED_PATH)) || true
-	@rm $(DECOMPILED_PATH)/sources.txt
+android\:tree-sitter: $$(addprefix $$(DECOMPILED_PATH)/,$$(addsuffix .sources,$$(LANGUAGES)))
+	for LANGUAGE in $(LANGUAGES); do \
+    	$(call android_command_volume_choice,tree-sitter,query /opt/tree-sitter/queries/$$LANGUAGE.scm --paths /$(DECOMPILED_PATH)/$$LANGUAGE.sources,$(DECOMPILED_PATH)) || true; \
+    	rm -v $(DECOMPILED_PATH)/$$LANGUAGE.sources; \
+    done
