@@ -116,8 +116,8 @@ make android:emulator copy \
   HOST_PATH="{{host_path}}"
 ```
 
-`host_path` should be `projects/{{package_name}}/artifacts/{{package_version}}
-/apk/{{timestamp without timezone}}-{{file name}}.apk`
+`host_path` should be `projects/android/{{package_name}}/artifacts/
+{{package_version}}/apk/{{timestamp without timezone}}-{{file name}}.apk`
 
 ### uninstall APK
 
@@ -137,9 +137,9 @@ stop android emulator.
 
 after processing this skill flow:
 
-- confirm that `projects/{{package_name}}/artifacts/{{package_version}}/apk`
-  exists;
-- confirm that `projects/{{package_name}}/artifacts/{{package_version}}/apk`
-  is the only directory created by this skill;
+- confirm that `projects/android/{{package_name}}/artifacts/
+  {{package_version}}/apk` exists;
+- confirm that `projects/android/{{package_name}}/artifacts/
+  {{package_version}}/apk` is the only directory created by this skill;
 - confirm that every APK file from `check package installation` exists in
-  `projects/{{package_name}}/artifacts/{{package_version}}/apk`.
+  `projects/android/{{package_name}}/artifacts/{{package_version}}/apk`.
