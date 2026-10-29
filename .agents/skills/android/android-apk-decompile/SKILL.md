@@ -27,7 +27,7 @@ unzip -Z1 {{apk_file}} | grep -E '^classes[\d]*\.dex$'
 ### decompile APK file
 
 set `output` with the value `projects/android/{{package_name}}/artifacts
-/{{package_version}}/apk/decompiled/{{APK file name}}`.
+/apk/decompiled/{{APK file name}}`.
 
 **missing information to set `output` should be obtained inspecting APK file.**
 

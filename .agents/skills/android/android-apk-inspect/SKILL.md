@@ -463,13 +463,13 @@ set `network_security_config.debug_override.certificates` with the
 
 #### create project directory
 
-inspect file should be added to `projects/android/{{name}}/artifacts/{{version}}
-/analysis/inspection`.
+inspect file should be added to `projects/android/{{name}}/artifacts
+/analysis/inspect`.
 
 #### generate JSON file
 
-create a new JSON file in project directory, using `{{file name}}.json` as name,
-with the values as below:
+create a new JSON file in project directory, using `{{apk file name}}.json`
+as name, with the values as below:
 
 ```json
 {
@@ -506,9 +506,8 @@ with the values as below:
 
 after processing this skill flow:
 
-- confirm that `projects/android/{{name}}/artifacts/{{version}}/analysis
-  /inspection` exists;
-- confirm that `projects/android/{{name}}/artifacts/{{version}}/analysis
-  /inspection` is the only directory created by this skill;
+- confirm that `projects/android/{{name}}/artifacts/analysis/inspect` exists;
+- confirm that `projects/android/{{name}}/artifacts/analysis/inspect` is the
+  only directory created by this skill;
 - confirm that there is a JSON file containing APK inspection data in
-  `projects/android/{{name}}/artifacts/{{version}}/analysis/inspection`.
+  `projects/android/{{name}}/artifacts/analysis/inspect`.

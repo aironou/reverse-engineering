@@ -15,7 +15,7 @@ as `apk_file`.
 ### decode APK file
 
 set `output` with the value `projects/android/{{package_name}}/artifacts
-/{{package_version}}/apk/decoded/{{APK file name}}`.
+/apk/decoded/{{APK file name}}`.
 
 **missing information to set `output` should be obtained inspecting APK file.**
 

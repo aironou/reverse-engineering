@@ -64,6 +64,8 @@ using `ADB shell`, run the command:
 dumpsys package {{package_name}} | grep -i versioncode
 ```
 
+set `package_version` to the `versionCode` value in the command result.
+
 ## flow
 
 ### start ADB shell
@@ -107,6 +109,8 @@ if the timeout expires, then `ask user to solve a problem`.
 
 ### copy APK files to host
 
+extract package version before copying the APK files.
+
 for each file in `check package instalattion` action, as `emulator_path`, using
 `terminal`, run the command:
 
@@ -116,8 +120,10 @@ make android:emulator copy \
   HOST_PATH="{{host_path}}"
 ```
 
-`host_path` should be `projects/android/{{package_name}}/artifacts/
-{{package_version}}/apk/{{timestamp without timezone}}-{{file name}}.apk`
+set `APK file name` to the basename of `emulator_path` without the `.apk`
+extension. set `timestamp` to the current timestamp without timezone.
+`host_path` should be `projects/android/{{package_name}}/artifacts/apk
+/{{timestamp without timezone}}-{{package_version}}-{{APK file name}}.apk`.
 
 ### uninstall APK
 
@@ -137,9 +143,9 @@ stop android emulator.
 
 after processing this skill flow:
 
-- confirm that `projects/android/{{package_name}}/artifacts/
-  {{package_version}}/apk` exists;
-- confirm that `projects/android/{{package_name}}/artifacts/
-  {{package_version}}/apk` is the only directory created by this skill;
+- confirm that `projects/android/{{package_name}}/artifacts/apk` exists;
+- confirm that `projects/android/{{package_name}}/artifacts/apk` is the only
+  directory created by this skill;
 - confirm that every APK file from `check package installation` exists in
-  `projects/android/{{package_name}}/artifacts/{{package_version}}/apk`.
+  `projects/android/{{package_name}}/artifacts/apk` with the
+  `{{timestamp}}-{{package_version}}-{{APK file name}}.apk` name.
