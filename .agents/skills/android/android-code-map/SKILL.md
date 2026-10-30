@@ -304,6 +304,83 @@ list. include only callbacks present in the index. if a callable has no
 append each receiver entrypoint to the `entrypoints` list, preserving the
 order of `inspect.receivers`.
 
+### map provider entrypoints
+
+for each object in `inspect.providers`, create an entrypoint with the schema
+below. copy each listed value from the provider object in the inspection JSON.
+split `provider.authorities` at each semicolon and include each resulting
+authority as a list item.
+
+```json
+{
+    "inspect_name": "{{provider.name}}",
+    "inspect_type": "providers",
+    "authorities": ["{{authority}}"],
+    "exported": "{{provider.exported}}",
+    "enabled": "{{provider.enabled}}",
+    "permission": "{{provider.permission}}",
+    "read_permission": "{{provider.read_permission}}",
+    "write_permission": "{{provider.write_permission}}",
+    "grant_uri_permission": "{{provider.grant_uri_permission}}",
+    "process": "{{provider.process}}",
+    "multiprocess": "{{provider.multiprocess}}",
+    "syncable": "{{provider.syncable}}",
+    "direct_boot_aware": "{{provider.direct_boot_aware}}",
+    "init_order": "{{provider.init_order}}",
+    "path_permissions": ["{{provider.path_permissions}}"],
+    "grant_ui_permissions": ["{{provider.grant_ui_permissions}}"],
+    "metadata": ["{{provider.metadata}}"],
+    "triggers": [],
+    "index_id": null,
+    "callables": []
+}
+```
+
+create one trigger for each authority, as below:
+
+```json
+{
+    "type": "content-uri",
+    "authority": "{{authority}}"
+}
+```
+
+set `triggers` to this list. provider URI requests are routed to the provider
+through these authorities. if the provider has no authority, set `triggers` to
+an empty list.
+
+#### relate provider to indexed type
+
+find the object in `index.types` whose `qualified_name` exactly matches
+`provider.name`.
+
+if exactly one type matches, set the entrypoint's `index_id` to that type's
+`id`. if no type matches or more than one type matches, set `index_id` to
+`null`.
+
+#### relate provider callbacks
+
+consider these ContentProvider callback names, in this order: `onCreate`,
+`query`, `insert`, `update`, `delete`, `getType`, `getTypeAnonymous`,
+`getStreamTypes`, `bulkInsert`, `applyBatch`, `call`, `openFile`,
+`openAssetFile`, `openTypedAssetFile`, `canonicalize`, `uncanonicalize`,
+`refresh`, `onCallingPackageChanged`, `onConfigurationChanged`, `onLowMemory`,
+`onTrimMemory`, and `shutdown`.
+
+for each name in this list, find the objects in `index.callables` whose
+`qualified_name` exactly matches `provider.name` followed by `.` and the
+callback name. include every matching callable in the entrypoint's `callables`
+list, preserving the callback order above and the index order among overloads.
+create each item using the callable object structure defined for Activity
+callbacks.
+
+if the provider type did not match an indexed type, set `callables` to an empty
+list. include only callbacks present in the index. if a callable has no
+`qualified_name`, it does not match.
+
+append each provider entrypoint to the `entrypoints` list, preserving the
+order of `inspect.providers`.
+
 ### generate map file
 
 create a JSON file at `projects/android/{{package_name}}/artifacts/analysis
