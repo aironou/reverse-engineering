@@ -255,6 +255,55 @@ list. include only callbacks present in the index. if a callable has no
 append each service entrypoint to the `entrypoints` list, preserving the order
 of `inspect.services`.
 
+### map receiver entrypoints
+
+for each object in `inspect.receivers`, create an entrypoint with the schema
+below. copy each listed value from the receiver object in the inspection JSON.
+
+```json
+{
+    "inspect_name": "{{receiver.name}}",
+    "inspect_type": "receivers",
+    "exported": "{{receiver.exported}}",
+    "enabled": "{{receiver.enabled}}",
+    "permission": "{{receiver.permission}}",
+    "process": "{{receiver.process}}",
+    "direct_boot_aware": "{{receiver.direct_boot_aware}}",
+    "priority": "{{receiver.priority}}",
+    "triggers": [],
+    "index_id": null,
+    "callables": []
+}
+```
+
+set `triggers` from `receiver.intent_filters`. for each intent filter, create
+an object using the `intent-filter` structure defined for Activities. if the
+receiver has no intent filters, set `triggers` to an empty list.
+
+#### relate receiver to indexed type
+
+find the object in `index.types` whose `qualified_name` exactly matches
+`receiver.name`.
+
+if exactly one type matches, set the entrypoint's `index_id` to that type's
+`id`. if no type matches or more than one type matches, set `index_id` to
+`null`.
+
+#### relate receiver callbacks
+
+find the objects in `index.callables` whose `qualified_name` exactly matches
+`receiver.name` followed by `.onReceive`. include every match in the
+entrypoint's `callables` list, preserving the index order among overloads.
+create each item using the callable object structure defined for Activity
+callbacks.
+
+if the receiver type did not match an indexed type, set `callables` to an empty
+list. include only callbacks present in the index. if a callable has no
+`qualified_name`, it does not match.
+
+append each receiver entrypoint to the `entrypoints` list, preserving the
+order of `inspect.receivers`.
+
 ### generate map file
 
 create a JSON file at `projects/android/{{package_name}}/artifacts/analysis
