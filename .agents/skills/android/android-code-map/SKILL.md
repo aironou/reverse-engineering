@@ -137,6 +137,77 @@ list. include only callbacks present in the index. if a callable has no
 append each activity entrypoint to the `entrypoints` list, preserving the
 order of `inspect.activities`.
 
+### map service entrypoints
+
+for each object in `inspect.services`, create an entrypoint with the schema
+below. copy each listed value from the service object in the inspection JSON.
+
+```json
+{
+    "inspect_name": "{{service.name}}",
+    "inspect_type": "services",
+    "exported": "{{service.exported}}",
+    "permission": "{{service.permission}}",
+    "process": "{{service.process}}",
+    "foreground_service_types": ["{{service.foreground_service_types}}"],
+    "isolated_process": "{{service.isolated_process}}",
+    "stop_with_task": "{{service.stop_with_task}}",
+    "direct_boot_aware": "{{service.direct_boot_aware}}",
+    "triggers": [],
+    "index_id": null,
+    "callables": []
+}
+```
+
+set `triggers` from `service.intent_filters`. for each intent filter, create an
+object as below:
+
+```json
+{
+    "type": "intent-filter",
+    "actions": ["{{intent_filter.action}}"],
+    "categories": ["{{intent_filter.categories}}"],
+    "data": ["{{intent_filter.data}}"]
+}
+```
+
+if the service has no intent filters, set `triggers` to an empty list.
+
+#### relate service to indexed type
+
+find the object in `index.types` whose `qualified_name` exactly matches
+`service.name`.
+
+if exactly one type matches, set the entrypoint's `index_id` to that type's
+`id`. if no type matches or more than one type matches, set `index_id` to
+`null`.
+
+#### relate service callbacks
+
+consider these Service callback names, in this order: `onCreate`, `onStart`,
+`onStartCommand`, `onBind`, `onUnbind`, `onRebind`, `onTaskRemoved`, `onTimeout`,
+`onDestroy`, `onConfigurationChanged`, `onLowMemory`, and `onTrimMemory`.
+
+for each name in this list, find the objects in `index.callables` whose
+`qualified_name` exactly matches `service.name` followed by `.` and the
+callback name. include every matching callable in the entrypoint's `callables`
+list, preserving the callback order above and the index order among overloads.
+create each item as below:
+
+```json
+{
+    "index_name": "{{callable.name}}",
+    "index_id": "{{callable.id}}"
+}
+```
+
+if the service type did not match an indexed type, set `callables` to an empty
+list. include only callbacks present in the index. if a callable has no
+`qualified_name`, it does not match.
+
+append each service entrypoint to the `entrypoints` list, preserving the order
+of `inspect.services`.
+
 ### generate map file
 
 create a JSON file at `projects/android/{{package_name}}/artifacts/analysis
