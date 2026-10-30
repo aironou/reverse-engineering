@@ -31,12 +31,13 @@ again. **only execute action again if user asked for it.**
 
 consider the actions below:
 
-| action    | depends_on |
-|-----------|------------|
-| inspect   |            |
-| decode    |            |
-| decompile |            |
-| index     | decompile  |
+| action                  | depends_on                                  |
+|-------------------------|---------------------------------------------|
+| `android-apk-inspect`   |                                             |
+| `android-apk-decode`    |                                             |
+| `android-apk-decompile` |                                             |
+| `android-code-index`    | `android-apk-decompile`                     |
+| `android-code-map`      | `android-apk-inspect`, `android-code-index` |
 
 for each APK file of `package_name`:
 
