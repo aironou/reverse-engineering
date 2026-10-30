@@ -137,6 +137,53 @@ list. include only callbacks present in the index. if a callable has no
 append each activity entrypoint to the `entrypoints` list, preserving the
 order of `inspect.activities`.
 
+### map activity-alias entrypoints
+
+for each object in `inspect.activity_aliases`, create an entrypoint with the
+schema below:
+
+```json
+{
+    "inspect_name": "{{activity_alias.name}}",
+    "inspect_type": "activity_aliases",
+    "target_activity": "{{activity_alias.target_activity}}",
+    "triggers": [],
+    "index_id": null,
+    "callables": []
+}
+```
+
+set `triggers` from `activity_alias.intent_filters`, using the same
+`intent-filter` object structure defined for Activities. if the alias has no
+intent filters, set `triggers` to an empty list.
+
+#### relate activity-alias to indexed type
+
+`activity-alias` names an alias and does not identify a class. find the object
+in `index.types` whose `qualified_name` exactly matches
+`activity_alias.target_activity`.
+
+if exactly one type matches, set the entrypoint's `index_id` to that type's
+`id`. if no type matches or more than one type matches, set `index_id` to
+`null`.
+
+#### relate activity-alias callbacks
+
+use the Activity lifecycle callback names defined in `relate activity
+callbacks`. for each callback name, find the objects in `index.callables` whose
+`qualified_name` exactly matches `activity_alias.target_activity` followed by
+`.` and the callback name. include every matching callable in the alias
+entrypoint's `callables` list, preserving the callback order and the index
+order among overloads. use the callable object structure defined for Activity
+callbacks.
+
+if the target activity type did not match an indexed type, set `callables` to
+an empty list. include only callbacks present in the index. if a callable has
+no `qualified_name`, it does not match.
+
+append each activity-alias entrypoint to the `entrypoints` list, preserving
+the order of `inspect.activity_aliases`.
+
 ### map service entrypoints
 
 for each object in `inspect.services`, create an entrypoint with the schema
