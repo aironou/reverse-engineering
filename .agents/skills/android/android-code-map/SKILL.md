@@ -22,6 +22,55 @@ using `terminal`, read `{{inspect_file}}` and `{{index_file}}` as JSON. keep the
 values available during this flow. set `package_name` to the `name` value from
 the inspection JSON (`inspect.name`).
 
+### map application entrypoint
+
+if `inspect.application.name` exists, create an entrypoint for the declared
+application class using this schema:
+
+```json
+{
+    "inspect_name": "{{application.name}}",
+    "inspect_type": "application",
+    "index_id": null,
+    "callables": []
+}
+```
+
+#### relate application to indexed type
+
+find the object in `index.types` whose `qualified_name` exactly matches
+`application.name`.
+
+if exactly one type matches, set the entrypoint's `index_id` to that type's
+`id`. if no type matches or more than one type matches, set `index_id` to
+`null`.
+
+#### relate application callbacks
+
+consider these Application callback names, in this order: `onCreate`,
+`onTerminate`, `onConfigurationChanged`, `onLowMemory`, and `onTrimMemory`.
+
+for each name in this list, find the objects in `index.callables` whose
+`qualified_name` exactly matches `application.name` followed by `.` and the
+callback name. include every matching callable in the entrypoint's `callables`
+list, preserving the callback order above and the index order among overloads.
+create each item as below:
+
+```json
+{
+    "index_name": "{{callable.name}}",
+    "index_id": "{{callable.id}}"
+}
+```
+
+if the application type did not match an indexed type, set `callables` to an
+empty list. include only callbacks present in the index. if a callable has no
+`qualified_name`, it does not match.
+
+append the application entrypoint to the beginning of the `entrypoints` list.
+if `inspect.application.name` does not exist, do not create an application
+entrypoint.
+
 ### map activity entrypoints
 
 for each object in `inspect.activities`, create an entrypoint with the schema
@@ -84,8 +133,6 @@ create each item as below:
 if the activity type did not match an indexed type, set `callables` to an empty
 list. include only callbacks present in the index. if a callable has no
 `qualified_name`, it does not match.
-
-#### collect entrypoints
 
 append each activity entrypoint to the `entrypoints` list, preserving the
 order of `inspect.activities`.
