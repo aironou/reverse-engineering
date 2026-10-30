@@ -167,6 +167,7 @@ properties as below:
 {
     "id": "callable:{{filename}}@{{start}}",
     "name": "{{callable.name}}",
+    "qualified_name": "{{callable qualified name}}",
     "return_type": "{{callable.return_type}}",
     "parameters": "{{list of callable.parameter}}",
     "scope": "{{scope}}"
@@ -178,6 +179,12 @@ where `start` is `{{start_line}}:{{start_column}}` of `callable.name`.
 where `scope` is the `id` of the closest indexed element that contains the
 `callable` in the same file and is not a condition. compare positions by line
 using the `range.start` and `range.end` in each element.
+
+set `qualified_name` by joining the enclosing package namespace, the names of
+any enclosing types from outermost to innermost, and `callable.name`, separated
+by `.`. use the `package.namespace` from the package declaration in the same
+file and the enclosing types identified through `scope`. omit a missing package
+namespace.
 
 #### condition
 
@@ -231,6 +238,7 @@ properties as below:
 {
     "id": "external:{{filename}}@{{start}}",
     "name": "{{external.name}}",
+    "qualified_name": "{{external qualified name}}",
     "return_type": "{{external.return_type}}",
     "parameters": "{{list of external.parameter}}",
     "scope": "{{scope}}"
@@ -243,6 +251,11 @@ where `scope` is the `id` of the closest indexed element that contains the
 `external` in the same file and is not a condition. compare positions by line
 using the `range.start` and `range.end` in each element.
 
+set `qualified_name` by joining the package namespace, enclosing type names
+from outermost to innermost, and `external.name`, separated by `.`. derive the
+package namespace from the package declaration in the same file and the
+enclosing types through `scope`. omit a missing package namespace.
+
 #### field
 
 for each pattern with `field` capture key, create a new `field` with properties
@@ -252,6 +265,7 @@ as below:
 {
     "id": "field:{{filename}}@{{start}}",
     "name": "{{field.name}}",
+    "qualified_name": "{{field qualified name}}",
     "type": "{{field.type}}",
     "value": "{{field.value}}",
     "modifiers": "{{list of field.modifier}}",
@@ -264,6 +278,11 @@ where `start` is `{{start_line}}:{{start_column}}` of `field.name`.
 where `scope` is the `id` of the closest indexed element that contains the
 `field` in the same file and is not a condition. compare positions by line
 using the `range.start` and `range.end` in each element.
+
+set `qualified_name` by joining the package namespace, enclosing type names
+from outermost to innermost, and `field.name`, separated by `.`. derive the
+package namespace from the package declaration in the same file and the
+enclosing types through `scope`. omit a missing package namespace.
 
 #### import
 
@@ -292,6 +311,7 @@ properties as below:
 {
     "id": "native:{{filename}}@{{start}}",
     "name": "{{native.name}}",
+    "qualified_name": "{{native qualified name}}",
     "return_type": "{{native.return_type}}",
     "parameters": "{{list of native.parameter}}",
     "scope": "{{scope}}"
@@ -303,6 +323,11 @@ where `start` is `{{start_line}}:{{start_column}}` of `native.name`.
 where `scope` is the `id` of the closest indexed element that contains the
 `native` in the same file. compare positions using the `range.start` and
 `range.end` in each element.
+
+set `qualified_name` by joining the package namespace, enclosing type names
+from outermost to innermost, and `native.name`, separated by `.`. derive the
+package namespace from the package declaration in the same file and the
+enclosing types through `scope`. omit a missing package namespace.
 
 #### native load
 
@@ -335,11 +360,20 @@ properties as below:
 {
     "id": "package:{{filename}}@{{start}}",
     "name": "{{package.name}}",
-    "namespace": "{{package.namespace}}"
+    "namespace": "{{package.namespace}}",
+    "qualified_name": "{{package.namespace}}"
 }
 ```
 
 where `start` is `{{start_line}}:{{start_column}}` of `package.name`.
+
+set `qualified_name` to the package namespace captured by `package.namespace`.
+
+read the package namespace from the package declaration in the same source
+file. Do not infer it from the APK application ID, directory path, or manifest.
+If a declaration exists, `package.namespace` and `package.qualified_name` must
+contain its namespace. An empty namespace is valid only when the source file
+has no package declaration.
 
 #### return
 
@@ -389,6 +423,7 @@ as below:
 {
     "id": "type:{{filename}}@{{start}}",
     "name": "{{type.name}}",
+    "qualified_name": "{{type qualified name}}",
     "alias_name": "{{type.alias_name}}",
     "scope": "{{scope}}"
 }
@@ -399,6 +434,12 @@ where `start` is `{{start_line}}:{{start_column}}` of `type.name`.
 where `scope` is the `id` of the closest indexed element that contains the
 `type` in the same file. compare positions using the `range.start` and
 `range.end` in each element. if none exists, set `scope` to `null`.
+
+set `qualified_name` by joining the package namespace, any enclosing type
+names from outermost to innermost, and `type.name`, separated by `.`. get the
+package namespace from the package declaration in the same file and enclosing
+type names by following the type's `scope` chain. omit a missing package
+namespace.
 
 #### variable
 
@@ -426,6 +467,13 @@ where `scope` is the `id` of the closest indexed element that contains the
 set `APK file name` to the basename of `decompiled_code_dir`. create a new JSON
 file at `projects/android/{{package_name}}/artifacts/analysis/index
 /{{APK file name}}.json`, with the values as below:
+
+build the JSON from the current tree-sitter capture result. When the user asks
+for a new index, do not reuse, copy, or merely reserialize an existing index.
+Before writing, derive package namespaces from their source declarations, then
+derive each type, callable, field, external, and native `qualified_name` from
+that namespace and its enclosing types. Preserve an empty namespace only for a
+file with no package declaration.
 
 ```json
 {
@@ -459,3 +507,5 @@ after processing this skill flow:
   /{{APK file name}}.json` exists;
 - confirm that `projects/android/{{package_name}}/artifacts/analysis/index
   /{{APK file name}}.json` is the only file created by this skill.
+- confirm that each indexed package with a source package declaration has a
+  non-empty `namespace`, and that qualified names include that namespace.
