@@ -109,7 +109,7 @@ DECOMPILED_PATH=$$(dirname $(1)); \
 SOURCE=$(subst .results,.sources,$(1)); \
 echo $$SOURCE; \
 LANGUAGE=$(2); \
-FILES=$$(find "$$SOURCE" -maxdepth 1 -type f -name '*.sources'); \
+FILES=$$(find "$$SOURCE" -maxdepth 1 -type f -name '*.sources' -size +0c); \
 if [ -n "$$FILES" ]; then \
 	export DECOMPILED_PATH LANGUAGE; \
 	printf '%s\n' "$$FILES" | \
