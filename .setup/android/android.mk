@@ -118,7 +118,7 @@ if [ -n "$$FILES" ]; then \
 	'; \
 	find "$$SOURCE" -maxdepth 1 -type f -name '*.results' -size +0c -exec cat {} + > $(1); \
 fi; \
-#rm -rd "$$SOURCE";
+rm -rd "$$SOURCE";
 endef
 
 projects/android/%/c.sources:
@@ -179,6 +179,10 @@ destroy::
 build\:android\:emulator:
 	$(call android_build,shell)
 
+.PHONY: build\:android\:%
+build\:android\:%:
+	$(call android_build,$(subst build:android:,,$@))
+
 .PHONY: android\:emulator
 android\:emulator: build\:android\:emulator
 	xhost +si:localuser:root || exit $$?
@@ -199,19 +203,11 @@ else
 endif
 	xhost -si:localuser:root
 
-.PHONY: build\:android\:apkanalyzer
-build\:android\:apkanalyzer:
-	$(call android_build,apkanalyzer)
-
 .PHONY: android\:apkanalyzer
 android\:apkanalyzer: APK := $(lastword $(PARAMS))
 android\:apkanalyzer: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apkanalyzer: build\:android\:apkanalyzer
 	$(call android_command_volume_choice,apkanalyzer,$(COMMAND),$(APK))
-
-.PHONY: build\:android\:aapt2
-build\:android\:aapt2:
-	$(call android_build,aapt2)
 
 .PHONY: android\:aapt2
 android\:aapt2: APK := $(lastword $(PARAMS))
@@ -219,19 +215,11 @@ android\:aapt2: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:aapt2: build\:android\:aapt2
 	$(call android_command_volume_choice,aapt2,$(COMMAND),$(APK))
 
-.PHONY: build\:android\:apksigner
-build\:android\:apksigner:
-	$(call android_build,apksigner)
-
 .PHONY: android\:apksigner
 android\:apksigner: APK := $(lastword $(PARAMS))
 android\:apksigner: COMMAND := $(filter-out $(APK),$(PARAMS))
 android\:apksigner: build\:android\:apksigner
 	$(call android_command_volume_choice,apksigner,$(COMMAND),$(APK))
-
-.PHONY: build\:android\:apktool
-build\:android\:apktool:
-	$(call android_build,apktool)
 
 .PHONY: android\:apktool
 android\:apktool: APK := $(lastword $(PARAMS))
@@ -246,10 +234,6 @@ else
 	$(call android_command_volume_choice,apktool,$(COMMAND),$(APK))
 endif
 
-.PHONY: build\:android\:jadx
-build\:android\:jadx:
-	$(call android_build,jadx)
-
 .PHONY: android\:jadx
 android\:jadx: APK := $(lastword $(PARAMS))
 android\:jadx: COMMAND := $(filter-out $(APK),$(PARAMS))
@@ -262,10 +246,6 @@ ifeq (copy,$(firstword $(PARAMS)))
 else
 	$(call android_command_volume_choice,jadx,$(COMMAND),$(APK))
 endif
-
-.PHONY: build\:android\:tree-sitter
-build\:android\:tree-sitter:
-	$(call android_build,tree-sitter)
 
 .SECONDEXPANSION:
 .PHONY: android\:tree-sitter
