@@ -20,18 +20,22 @@ code, also known as `decompiled_code_dir`.
 
 ### query
 
-to index code it is necessary to run tree-sitter query on decompiled code. using
-`terminal`, run the command:
+to index code, run the tree-sitter queries on decompiled code using `terminal`:
 
 ```shell
 make android:tree-sitter {{decompiled_code_dir}}
 ```
 
-set `output` with command result.
+the make target writes one capture file for each selected language at
+`{{decompiled_code_dir}}/{{language}}.results`. without explicit language
+arguments, the languages are `c`, `cpp`, `java`, `javascript`, `json`, `kotlin`,
+and `xml`. process result files directly without printing or loading their full
+contents into the model context. treat these files as parts of one capture
+set for the APK, not as separate indexing jobs.
 
 ### captures
 
-consider the capture result below:
+each non-empty results file contains captures in the format below:
 
 ```
 /projects/android/example/artifacts/apk/decompiled/example-base.apk/sources/example
@@ -468,12 +472,13 @@ set `APK file name` to the basename of `decompiled_code_dir`. create a new JSON
 file at `projects/android/{{package_name}}/artifacts/analysis/index
 /{{APK file name}}.json`, with the values as below:
 
-build the JSON from the current tree-sitter capture result. When the user asks
-for a new index, do not reuse, copy, or merely reserialize an existing index.
-Before writing, derive package namespaces from their source declarations, then
-derive each type, callable, field, external, and native `qualified_name` from
-that namespace and its enclosing types. Preserve an empty namespace only for a
-file with no package declaration.
+combine the captures from every selected `{{language}}.results` file into the
+lists below, merging indexed objects with the same `id`. for a new index, do not
+reuse, copy, or merely reserialize an existing index. before writing, derive
+package namespaces from their source declarations, then derive each type,
+callable, field, external, and native `qualified_name` from that namespace and
+its enclosing types. Preserve an empty namespace only for a file with no package
+declaration.
 
 ```json
 {
@@ -505,7 +510,13 @@ after processing this skill flow:
   exists;
 - confirm that `projects/android/{{package_name}}/artifacts/analysis/index
   /{{APK file name}}.json` exists;
-- confirm that `projects/android/{{package_name}}/artifacts/analysis/index
-  /{{APK file name}}.json` is the only file created by this skill.
+- confirm that `{{APK file name}}.json` is the only new file under the analysis
+  `index` directory; the `{{language}}.results` files are expected make outputs
+  under `{{decompiled_code_dir}}`.
+- confirm that this one JSON includes captures from all selected languages
+  that produced results, with no per-language index JSON files.
+- confirm that each selected language's `{{decompiled_code_dir}}/
+  {{language}}.results` file was used as the capture input, rather than the make
+  command output.
 - confirm that each indexed package with a source package declaration has a
   non-empty `namespace`, and that qualified names include that namespace.
