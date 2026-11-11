@@ -472,14 +472,6 @@ set `APK file name` to the basename of `decompiled_code_dir`. create a new JSON
 file at `projects/android/{{package_name}}/artifacts/analysis/index
 /{{APK file name}}.json`, with the values as below:
 
-combine the captures from every selected `{{language}}.results` file into the
-lists below, merging indexed objects with the same `id`. for a new index, do not
-reuse, copy, or merely reserialize an existing index. before writing, derive
-package namespaces from their source declarations, then derive each type,
-callable, field, external, and native `qualified_name` from that namespace and
-its enclosing types. Preserve an empty namespace only for a file with no package
-declaration.
-
 ```json
 {
     "annotations": "{{annotation list}}",
@@ -502,6 +494,19 @@ declaration.
 }
 ```
 
+combine the captures from every selected `{{language}}.results` file into the
+lists below, merging indexed objects with the same `id`. for a new index, do not
+reuse, copy, or merely reserialize an existing index. before writing, derive
+package namespaces from their source declarations, then derive each type,
+callable, field, external, and native `qualified_name` from that namespace and
+its enclosing types. Preserve an empty namespace only for a file with no package
+declaration.
+
+### cleanup
+
+after generating the index, remove every `{{decompiled_code_dir}}
+/{{language}}.results` file generated.
+
 ## verification
 
 after processing this skill flow:
@@ -511,8 +516,7 @@ after processing this skill flow:
 - confirm that `projects/android/{{package_name}}/artifacts/analysis/index
   /{{APK file name}}.json` exists;
 - confirm that `{{APK file name}}.json` is the only new file under the analysis
-  `index` directory; the `{{language}}.results` files are expected make outputs
-  under `{{decompiled_code_dir}}`.
+  `index` directory.
 - confirm that this one JSON includes captures from all selected languages
   that produced results, with no per-language index JSON files.
 - confirm that each selected language's `{{decompiled_code_dir}}/
