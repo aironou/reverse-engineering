@@ -12,7 +12,7 @@ RUN apk add --no-cache \
 
 WORKDIR /opt
 
-RUN git clone -b v0.27.0 --single-branch --depth 1 https://github.com/tree-sitter/tree-sitter \
+RUN git clone -b v0.27.1 --single-branch --depth 1 https://github.com/tree-sitter/tree-sitter \
     && cd tree-sitter \
     && cargo build --release
 
