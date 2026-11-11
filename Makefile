@@ -5,6 +5,8 @@ MAKEFLAGS += --no-print-directory
 PARAMS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 HAS_FORCE := $(findstring B,$(firstword $(MAKEFLAGS)))
 
+.SILENT:
+
 ifneq ($(MAKE_TERMOUT),)
 	TEXT_RESET := \033[0m
 	TEXT_BOLD := \033[1m
@@ -28,12 +30,12 @@ endif
 ifneq ($(strip $(PARAMS)),)
 .PHONY: $(PARAMS)
 $(PARAMS)::
-	@:
+	:
 endif
 
-define HELP
-@printf '\n$(TEXT_BOLD)$(TEXT_BLUE)general:$(TEXT_RESET)\n'
-@printf '%b%b$(TEXT_RESET)|%b%b$(TEXT_RESET)\n' \
+define help
+printf '\n$(TEXT_BOLD)$(TEXT_BLUE)general:$(TEXT_RESET)\n'
+printf '%b%b$(TEXT_RESET)|%b%b$(TEXT_RESET)\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'help' '' 'print this help message' \
 	'' '' '$(TEXT_CYAN)' 'make help\n' \
 	'$(TEXT_BOLD)$(TEXT_MAGENTA)' 'build' '' 'build environments' \
@@ -45,13 +47,13 @@ define HELP
 	'$(TEXT_BRIGHT_MAGENTA)'  '    -B, --always-make' '' 'also destroy volumes'\
 	'' '' '$(TEXT_CYAN)' 'make build [-B, --always-make]\n' \
 | column -s '|' -t -d -N command,description -W description -L | sed -e 's/^/  /'
-@echo $(DIVIDER)
+echo $(DIVIDER)
 endef
 
 .PHONY: help
 help::
 ifeq (,$(PARAMS))
-	$(call HELP)
+	$(call help)
 endif
 
 .PHONY: build
